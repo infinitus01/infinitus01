@@ -7,6 +7,7 @@ Current focus:
 - HEA / MPEA candidate audit interfaces
 - descriptor-level review workflows
 - claim-boundary-safe AI demos
+- Molecule Identity Audit: a fail-closed molecular identity, metadata consistency, and claim-boundary audit showcase.
 - engineering sandbox prototypes with explicit non-production boundaries
 - local-first software experiments with reproducible audit trails
 
