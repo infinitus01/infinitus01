@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.2",
+  "release": "v0.0.1-p0",
+  "purpose": "PERSONAL_PORTFOLIO_DEMO",
+  "fixture_id": "SYN-HEA-001",
+  "fixture_type": "SYNTHETIC_VISUALIZATION_FIXTURE",
+  "structure_file": "fixture/SYN-HEA-001.xyz",
+  "structure_sha256": "7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a",
+  "atom_count": 16,
+  "nominal_composition": {
+    "Fe": 8,
+    "Ni": 4,
+    "Cr": 4
+  },
+  "display_formula": "Fe50Ni25Cr25",
+  "coordinate_basis": "CARTESIAN_ONLY",
+  "crystallographic_semantics": "NONE",
+  "display_arrangement": "BCC-like visual arrangement only",
+  "display_spacing_angstrom": 2.86,
+  "display_bounds_role": "VISUAL_AID_ONLY",
+  "display_bounds_is_unit_cell": false,
+  "scientific_validation": "NOT_ASSESSED",
+  "scientific_claim_status": "NONE",
+  "artifact_checks": {
+    "parse": {
+      "status": "PASS",
+      "parser_version": "release-validator/0.1",
+      "atom_count": 16
+    },
+    "hash_verification": {
+      "status": "PASS",
+      "expected_sha256": "7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a",
+      "computed_sha256": "7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a",
+      "verifier": "release-validator/0.1"
+    },
+    "render_replay": {
+      "status": "UNAVAILABLE",
+      "viewer_build": "material-evidence-card/v0.0.1-p0",
+      "camera_preset": "INITIAL_ISOMETRIC",
+      "representation": "BALL_AND_STICK",
+      "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY",
+      "reason": "Browser navigation was blocked by the managed release environment; no replay PASS is claimed."
+    }
+  },
+  "notes": [
+    "Coordinates are synthetic and were generated for interface demonstration.",
+    "No phase stability, performance, manufacturability, or experimental claim is made.",
+    "The display bounds are not a unit cell.",
+    "The webpage embeds the same coordinate fixture for offline portability."
+  ]
+}
