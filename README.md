@@ -15,6 +15,12 @@ These repositories are research and software prototypes. They do not claim exper
 
 ## Featured Projects
 
+### Material Evidence Card P0
+
+A self-contained personal portfolio demo connecting an interactive synthetic material display to file identity, reproducibility metadata, and explicit scientific claim boundaries.
+
+[Open the project source](projects/material-evidence-card-p0)
+
 ### HEA Candidate Audit Console
 
 A static MVP baseline for passive high-entropy alloy candidate auditing.
