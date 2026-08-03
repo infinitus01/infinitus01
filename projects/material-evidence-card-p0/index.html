@@ -11,17 +11,21 @@
 <div class="shell">
 <nav>
   <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7.5 12 3l7 4.5v9L12 21l-7-4.5v-9Z" stroke="currentColor"/><path d="M5.5 7.7 12 12l6.5-4.3M12 12v8.4" stroke="currentColor" opacity=".75"/></svg></div><span>Material Evidence Card <span style="color:#6f7a88;font-weight:500">/ P0 portfolio</span></span></div>
-  <div class="navnote">P0 interactive concept · hash-bound fixture</div>
+  <div class="navnote">Spec v1.0 · hash-bound fixture</div>
 </nav>
 
-<!-- display_formula: Fe50Ni25Cr25 -->
+<!--
+MATERIAL_EVIDENCE_CARD_SPEC: v1.0
+RECIPE_CLASS: SYNTHETIC_FIXTURE
+NOMINAL_ATOMIC_COMPOSITION: Fe50Ni25Cr25 (at.%)
+-->
 <main class="hero">
 <section class="card viewer-card">
   <div class="viewer-top">
-    <div><div class="eyebrow">Candidate visualization fixture</div><h1 class="title">SYN-HEA-001</h1><p class="subtitle">一張不是只會旋轉的材料卡：視覺、來源身分、處理狀態與主張邊界同畫面呈現。</p></div>
-    <div class="badges"><span class="badge syn">Synthetic</span><span class="badge">Interactive</span><span class="badge none">Claim: None</span></div>
+    <div><div class="eyebrow">Synthetic visualization fixture</div><h1 class="title">SYN-HEA-001</h1><p class="subtitle">可重播空間資料物件：配方基準、來源身分、處理狀態與科學主張邊界同畫面呈現。</p></div>
+    <div class="badges"><span class="badge syn">Synthetic fixture</span><span class="badge">at.% basis</span><span class="badge none">Claim: None</span></div>
   </div>
-  <canvas id="stage" aria-label="Interactive synthetic lattice viewer"></canvas>
+  <canvas id="stage" aria-label="Interactive synthetic Cartesian coordinate viewer"></canvas>
   <div id="tooltip" class="tooltip"></div>
   <div class="bounds-note">CARTESIAN DISPLAY BOUNDS · VISUAL AID — NOT A UNIT CELL</div>
   <div class="controls">
@@ -31,10 +35,10 @@
   </div>
   <div class="legend"><span><i class="dot fe"></i>Fe</span><span><i class="dot ni"></i>Ni</span><span><i class="dot cr"></i>Cr</span></div>
   <div class="viewer-footer">
-    <div class="metric"><div class="k">Display composition</div><div class="v">Fe₅₀Ni₂₅Cr₂₅ <small>synthetic</small></div></div>
+    <div class="metric"><div class="k">Nominal atomic composition</div><div class="v">Fe₅₀Ni₂₅Cr₂₅ <small>(at.%)</small></div></div>
+    <div class="metric"><div class="k">Composition derivation</div><div class="v">8 : 4 : 4 <small>16 synthetic atoms</small></div></div>
     <div class="metric"><div class="k">Spatial arrangement</div><div class="v">BCC-like <small>display demo only</small></div></div>
     <div class="metric"><div class="k">Display spacing</div><div class="v">2.86 Å <small>visual input</small></div></div>
-    <div class="metric"><div class="k">Atoms</div><div class="v">16 <small>embedded XYZ</small></div></div>
   </div>
 </section>
 
@@ -42,31 +46,33 @@
   <section class="card panel">
     <h2>Evidence identity</h2>
     <div class="rows">
-      <div class="row"><span class="label">Fixture type</span><span class="state ok">SYNTHETIC</span></div>
+      <div class="row"><span class="label">Recipe class</span><span class="state ok">SYNTHETIC_FIXTURE</span></div>
+      <div class="row"><span class="label">Composition basis</span><span class="value">ATOMIC_PERCENT</span></div>
+      <div class="row"><span class="label">Fixture origin</span><span class="value">GENERATED_IN_PROJECT</span></div>
       <div class="row"><span class="label">Structure identity</span><span class="state ok">HASH-BOUND</span></div>
       <div class="row"><span class="label">Transformation</span><span class="value">Center + render only</span></div>
       <div class="row"><span class="label">Source file</span><span class="value code">SYN-HEA-001.xyz</span></div>
       <div class="row"><span class="label">SHA-256</span><span class="value code" title="7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a">7c72fef00bf33b…a369306a</span></div>
     </div>
-    <div class="tiny">fixture://SYN-HEA-001 · schema 0.1</div>
+    <div class="tiny">fixture://SYN-HEA-001 · manifest schema 1.0 · spec v1.0</div>
   </section>
 
   <section class="card panel boundary">
     <h2>Status boundary</h2>
-    <div class="boundary-line"><div class="icon">✓</div><div><strong>VIEWER EVENT / 介面事件</strong><p>本頁將 16 個內嵌 synthetic 座標建立為可互動的 Canvas 投影。</p></div></div>
-    <div class="boundary-line"><div class="icon">—</div><div><strong>SCIENTIFIC VALIDATION / 未評估</strong><p>尚未進行相穩定性、材料性能、製程或可製造性評估。</p></div></div>
-    <div class="boundary-line"><div class="icon">●</div><div><strong>CLAIM STATUS: NONE / 無科學主張</strong><p>此展示不形成材料結論、推薦或決策依據。</p></div></div>
+    <div class="boundary-line"><div class="icon">✓</div><div><strong>ARTIFACT CHECKS / 產物檢查</strong><p>XYZ parse 與 SHA-256 verification 已通過；render replay 僅依 manifest 的實際狀態宣告。</p></div></div>
+    <div class="boundary-line"><div class="icon">—</div><div><strong>SCIENTIFIC VALIDATION: NOT_ASSESSED / 未評估</strong><p>尚未進行相穩定性、材料性能、製程或可製造性評估。</p></div></div>
+    <div class="boundary-line"><div class="icon">●</div><div><strong>SCIENTIFIC CLAIM STATUS: NONE / 無科學主張</strong><p>此組成是 synthetic display composition，不是已驗證合金配方、材料推薦或決策依據。</p></div></div>
   </section>
 
   <section class="card panel">
     <h2>Evidence chain</h2>
     <div class="chain">
-      <div class="node"><div class="n">01</div><b>Source</b><small>XYZ fixture</small></div>
-      <div class="node"><div class="n">02</div><b>Identity</b><small>SHA-256</small></div>
-      <div class="node"><div class="n">03</div><b>Projection</b><small>Web canvas</small></div>
+      <div class="node"><div class="n">01</div><b>Class</b><small>Synthetic fixture</small></div>
+      <div class="node"><div class="n">02</div><b>Composition</b><small>Atomic percent</small></div>
+      <div class="node"><div class="n">03</div><b>Identity</b><small>XYZ + SHA-256</small></div>
       <div class="node"><div class="n">04</div><b>Boundary</b><small>Claim: none</small></div>
     </div>
-    <p class="disclaimer">這是個人作品集中的 P0 介面實驗，不是科學驗證器。顯示框只協助閱讀笛卡兒座標，不代表晶胞、週期邊界或晶體學詮釋。</p>
+    <p class="disclaimer"><strong>Derived from synthetic display atoms.</strong> 這是個人作品集中的 P0 介面實驗，不是科學驗證器。顯示框只協助閱讀笛卡兒座標，不代表晶胞、週期邊界或晶體學詮釋。</p>
   </section>
 </aside>
 </main>

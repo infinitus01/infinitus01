@@ -7,6 +7,7 @@ path = [
   "viewer.js",
   "README.md",
   "manifest.json",
+  "MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md",
   "KNOWN_LIMITATIONS.md",
   "LICENSES.md",
   "NOTICE.md"
