@@ -1,0 +1,22 @@
+version = 1
+
+[[annotations]]
+path = [
+  "index.html",
+  "styles.css",
+  "viewer.js",
+  "README.md",
+  "manifest.json",
+  "KNOWN_LIMITATIONS.md",
+  "LICENSES.md",
+  "NOTICE.md"
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 HORNG"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["fixture/*.xyz", "fixture/*.xyz.sha256"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 HORNG"
+SPDX-License-Identifier = "CC0-1.0"
