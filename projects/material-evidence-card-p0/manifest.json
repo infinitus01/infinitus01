@@ -1,26 +1,60 @@
 {
-  "schema_version": "0.2",
-  "release": "v0.0.1-p0",
+  "schema_version": "1.0",
+  "specification": {
+    "id": "MATERIAL_EVIDENCE_CARD_SPEC",
+    "version": "1.0",
+    "path": "MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md"
+  },
+  "release": "v0.0.2-p0",
   "purpose": "PERSONAL_PORTFOLIO_DEMO",
   "fixture_id": "SYN-HEA-001",
+  "recipe_class": "SYNTHETIC_FIXTURE",
   "fixture_type": "SYNTHETIC_VISUALIZATION_FIXTURE",
+  "source_provenance": {
+    "origin": "GENERATED_IN_PROJECT",
+    "source_type": "SYNTHETIC",
+    "source_reference": null,
+    "reuse_license": "CC0-1.0"
+  },
   "structure_file": "fixture/SYN-HEA-001.xyz",
   "structure_sha256": "7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a",
   "atom_count": 16,
-  "nominal_composition": {
-    "Fe": 8,
-    "Ni": 4,
-    "Cr": 4
+  "nominal_atomic_composition": {
+    "basis": "ATOMIC_PERCENT",
+    "derivation": "DISPLAY_ATOM_COUNT",
+    "display_notation": "Fe50Ni25Cr25 (at.%)",
+    "total_atomic_percent": 100.0,
+    "components": {
+      "Fe": {
+        "display_atom_count": 8,
+        "atomic_percent": 50.0
+      },
+      "Ni": {
+        "display_atom_count": 4,
+        "atomic_percent": 25.0
+      },
+      "Cr": {
+        "display_atom_count": 4,
+        "atomic_percent": 25.0
+      }
+    }
   },
-  "display_formula": "Fe50Ni25Cr25",
   "coordinate_basis": "CARTESIAN_ONLY",
   "crystallographic_semantics": "NONE",
   "display_arrangement": "BCC-like visual arrangement only",
   "display_spacing_angstrom": 2.86,
   "display_bounds_role": "VISUAL_AID_ONLY",
   "display_bounds_is_unit_cell": false,
+  "scientific_hypothesis_status": "NONE",
   "scientific_validation": "NOT_ASSESSED",
   "scientific_claim_status": "NONE",
+  "decision_usable": false,
+  "artifact_check_status_enum": [
+    "NOT_RUN",
+    "PASS",
+    "FAIL",
+    "UNAVAILABLE"
+  ],
   "artifact_checks": {
     "parse": {
       "status": "PASS",
@@ -33,9 +67,15 @@
       "computed_sha256": "7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a",
       "verifier": "release-validator/0.1"
     },
+    "composition_derivation": {
+      "status": "PASS",
+      "method": "ELEMENT_COUNT_DIVIDED_BY_TOTAL_DISPLAY_ATOMS",
+      "sum_atomic_percent": 100.0,
+      "tolerance": 1e-09
+    },
     "render_replay": {
       "status": "UNAVAILABLE",
-      "viewer_build": "material-evidence-card/v0.0.1-p0",
+      "viewer_build": "material-evidence-card/v0.0.2-p0",
       "camera_preset": "INITIAL_ISOMETRIC",
       "representation": "BALL_AND_STICK",
       "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY",
@@ -43,8 +83,9 @@
     }
   },
   "notes": [
-    "Coordinates are synthetic and were generated for interface demonstration.",
-    "No phase stability, performance, manufacturability, or experimental claim is made.",
+    "Coordinates and composition are synthetic and were generated for interface demonstration.",
+    "Nominal atomic composition is derived from the 16 synthetic display atoms.",
+    "No phase stability, performance, manufacturability, experimental, or recommendation claim is made.",
     "The display bounds are not a unit cell.",
     "The webpage embeds the same coordinate fixture for offline portability."
   ]
