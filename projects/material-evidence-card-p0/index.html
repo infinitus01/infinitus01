@@ -17,12 +17,13 @@
 <!--
 MATERIAL_EVIDENCE_CARD_SPEC: v1.0
 RECIPE_CLASS: SYNTHETIC_FIXTURE
-NOMINAL_ATOMIC_COMPOSITION: Fe50Ni25Cr25 (at.%)
+NOMINAL_ATOMIC_COMPOSITION: Fe37.5Ni37.5Cr25 (at.%)
+DISPLAY_NOTATION_AUTHORITY: NON_AUTHORITATIVE
 -->
 <main class="hero">
 <section class="card viewer-card">
   <div class="viewer-top">
-    <div><div class="eyebrow">Synthetic visualization fixture</div><h1 class="title">SYN-HEA-001</h1><p class="subtitle">可重播空間資料物件：配方基準、來源身分、處理狀態與科學主張邊界同畫面呈現。</p></div>
+    <div><div class="eyebrow">Synthetic visualization fixture</div><h1 class="title">SYN-HEA-002</h1><p class="subtitle">可重播空間資料物件：配方基準、來源身分、處理狀態與科學主張邊界同畫面呈現。</p></div>
     <div class="badges"><span class="badge syn">Synthetic fixture</span><span class="badge">at.% basis</span><span class="badge none">Claim: None</span></div>
   </div>
   <canvas id="stage" aria-label="Interactive synthetic Cartesian coordinate viewer"></canvas>
@@ -35,10 +36,10 @@ NOMINAL_ATOMIC_COMPOSITION: Fe50Ni25Cr25 (at.%)
   </div>
   <div class="legend"><span><i class="dot fe"></i>Fe</span><span><i class="dot ni"></i>Ni</span><span><i class="dot cr"></i>Cr</span></div>
   <div class="viewer-footer">
-    <div class="metric"><div class="k">Nominal atomic composition</div><div class="v">Fe₅₀Ni₂₅Cr₂₅ <small>(at.%)</small></div></div>
-    <div class="metric"><div class="k">Composition derivation</div><div class="v">8 : 4 : 4 <small>16 synthetic atoms</small></div></div>
+    <div class="metric"><div class="k">Nominal atomic composition</div><div class="v">Fe 37.5 · Ni 37.5 · Cr 25 <small>at.%</small></div></div>
+    <div class="metric"><div class="k">Composition derivation</div><div class="v">6 : 6 : 4 <small>16 synthetic atoms</small></div></div>
     <div class="metric"><div class="k">Spatial arrangement</div><div class="v">BCC-like <small>display demo only</small></div></div>
-    <div class="metric"><div class="k">Display spacing</div><div class="v">2.86 Å <small>visual input</small></div></div>
+    <div class="metric"><div class="k">Display spacing</div><div class="v">2.92 Å <small>visual input</small></div></div>
   </div>
 </section>
 
@@ -51,17 +52,17 @@ NOMINAL_ATOMIC_COMPOSITION: Fe50Ni25Cr25 (at.%)
       <div class="row"><span class="label">Fixture origin</span><span class="value">GENERATED_IN_PROJECT</span></div>
       <div class="row"><span class="label">Structure identity</span><span class="state ok">HASH-BOUND</span></div>
       <div class="row"><span class="label">Transformation</span><span class="value">Center + render only</span></div>
-      <div class="row"><span class="label">Source file</span><span class="value code">SYN-HEA-001.xyz</span></div>
-      <div class="row"><span class="label">SHA-256</span><span class="value code" title="7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a">7c72fef00bf33b…a369306a</span></div>
+      <div class="row"><span class="label">Source file</span><span class="value code">SYN-HEA-002.xyz</span></div>
+      <div class="row"><span class="label">SHA-256</span><span class="value code" title="be25b48ae2703ced6b74363afcf41c28306ba5d7eaf79f73c3674024525866f5">be25b48ae2703c…24525866f5</span></div>
     </div>
-    <div class="tiny">fixture://SYN-HEA-001 · manifest schema 1.0 · spec v1.0</div>
+    <div class="tiny">fixture://SYN-HEA-002 · manifest schema 1.0 · spec v1.0</div>
   </section>
 
   <section class="card panel boundary">
     <h2>Status boundary</h2>
-    <div class="boundary-line"><div class="icon">✓</div><div><strong>ARTIFACT CHECKS / 產物檢查</strong><p>XYZ parse 與 SHA-256 verification 已通過；render replay 僅依 manifest 的實際狀態宣告。</p></div></div>
+    <div class="boundary-line"><div class="icon">✓</div><div><strong>ARTIFACT CHECKS / 產物檢查</strong><p>XYZ parse、SHA-256、composition derivation、manifest/UI identity、JavaScript syntax 與 license classification 已通過；render replay 為 UNAVAILABLE。</p></div></div>
     <div class="boundary-line"><div class="icon">—</div><div><strong>SCIENTIFIC VALIDATION: NOT_ASSESSED / 未評估</strong><p>尚未進行相穩定性、材料性能、製程或可製造性評估。</p></div></div>
-    <div class="boundary-line"><div class="icon">●</div><div><strong>SCIENTIFIC CLAIM STATUS: NONE / 無科學主張</strong><p>此組成是 synthetic display composition，不是已驗證合金配方、材料推薦或決策依據。</p></div></div>
+    <div class="boundary-line"><div class="icon">●</div><div><strong>SCIENTIFIC CLAIM STATUS: NONE / 無科學主張</strong><p>此組成是 synthetic display composition，不是已驗證合金配方、最佳化結果、材料推薦或決策依據。</p></div></div>
   </section>
 
   <section class="card panel">
@@ -72,7 +73,7 @@ NOMINAL_ATOMIC_COMPOSITION: Fe50Ni25Cr25 (at.%)
       <div class="node"><div class="n">03</div><b>Identity</b><small>XYZ + SHA-256</small></div>
       <div class="node"><div class="n">04</div><b>Boundary</b><small>Claim: none</small></div>
     </div>
-    <p class="disclaimer"><strong>Derived from synthetic display atoms.</strong> 這是個人作品集中的 P0 介面實驗，不是科學驗證器。顯示框只協助閱讀笛卡兒座標，不代表晶胞、週期邊界或晶體學詮釋。</p>
+    <p class="disclaimer"><strong>Derived from synthetic display atoms.</strong> Compact notation is display-only; the per-element counts, basis, and derivation in <code>manifest.json</code> are authoritative. 這是個人作品集中的 P0 介面實驗，不是科學驗證器。</p>
   </section>
 </aside>
 </main>

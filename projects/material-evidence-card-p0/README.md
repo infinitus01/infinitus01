@@ -2,38 +2,64 @@
 
 A personal portfolio prototype exploring how interactive material visualization can be connected to composition identity, artifact checks, reproducibility metadata, and explicit scientific claim boundaries.
 
-This project follows [`MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md`](MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md). Future Monday / Wednesday / Friday synthetic showcase updates must use the same field names, state model, and release gates.
+This project follows [`MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md`](MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md). Every recurring synthetic showcase must use the same field names, state model, and publication gates.
 
 ## Release status
 
 ```text
-RELEASE: v0.0.2-p0
+RELEASE: v0.0.3-p0
 PURPOSE: PERSONAL_PORTFOLIO_DEMO
 SPECIFICATION: MATERIAL_EVIDENCE_CARD_SPEC_v1.0
+ACTIVE_FIXTURE: SYN-HEA-002
 RECIPE_CLASS: SYNTHETIC_FIXTURE
+SCIENTIFIC_HYPOTHESIS_STATUS: NONE
 SCIENTIFIC_VALIDATION: NOT_ASSESSED
 SCIENTIFIC_CLAIM_STATUS: NONE
 DECISION_USABLE: FALSE
 P0.1_CONFORMANCE: NOT_CLAIMED
 ```
 
-This release does **not** establish crystallographic interpretation, phase stability, material performance, manufacturability, experimental validation, or material recommendations.
+This release does **not** establish crystallographic interpretation, phase stability, material performance, manufacturability, experimental validation, optimization, or material recommendations.
 
-## Record summary
+## Required record order
+
+1. `FIXTURE_ID`
+2. `RECIPE_CLASS`
+3. `NOMINAL_ATOMIC_COMPOSITION`
+4. `SOURCE_PROVENANCE`
+5. `ARTIFACT_IDENTITY`
+6. `ARTIFACT_CHECKS`
+7. `SPATIAL_DISPLAY_BOUNDARY`
+8. `SCIENTIFIC_BOUNDARY`
+9. `DOWNLOADS_OR_FILE_PATHS`
+10. `KNOWN_LIMITS`
+
+## Active record summary
 
 | Field | Value |
 |---|---|
-| Fixture ID | `SYN-HEA-001` |
+| Fixture ID | `SYN-HEA-002` |
 | Recipe class | `SYNTHETIC_FIXTURE` |
-| Nominal atomic composition | `Fe 50 at.% · Ni 25 at.% · Cr 25 at.%` |
-| Display notation | `Fe50Ni25Cr25 (at.%)` |
-| Composition derivation | `8 Fe : 4 Ni : 4 Cr` from 16 synthetic display atoms |
+| Nominal atomic composition | `Fe 37.5 at.% · Ni 37.5 at.% · Cr 25 at.%` |
+| Display notation | `Fe37.5Ni37.5Cr25 (at.%)` — non-authoritative |
+| Composition derivation | `6 Fe : 6 Ni : 4 Cr` from 16 synthetic display atoms |
+| Atomic-percent total | `100.0` with tolerance `1e-09` |
 | Fixture origin | `GENERATED_IN_PROJECT` |
 | Scientific hypothesis | `NONE` |
 | Scientific validation | `NOT_ASSESSED` |
 | Scientific claim status | `NONE` |
+| Decision usable | `FALSE` |
 
-The displayed ratio is a **synthetic nominal atomic composition**, not a validated alloy formulation.
+The displayed ratio is a **synthetic nominal atomic composition**, not a validated alloy formulation. Per-element counts, basis, and derivation in `manifest.json` are authoritative; compact notation is display-only.
+
+## Published fixtures
+
+Published fixture files and hashes are immutable within this portfolio series.
+
+| Fixture | Nominal atomic composition | Display-atom counts | SHA-256 |
+|---|---|---|---|
+| `SYN-HEA-001` | `Fe 50 at.% · Ni 25 at.% · Cr 25 at.%` | `8 : 4 : 4` | `7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a` |
+| `SYN-HEA-002` | `Fe 37.5 at.% · Ni 37.5 at.% · Cr 25 at.%` | `6 : 6 : 4` | `be25b48ae2703ced6b74363afcf41c28306ba5d7eaf79f73c3674024525866f5` |
 
 ## Open locally
 
@@ -41,12 +67,14 @@ Open `index.html` directly in a modern browser. No package installation, web ser
 
 ## Evidence identity
 
-- Active fixture: `fixture/SYN-HEA-001.xyz`
-- SHA-256: `7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a`
+- Active fixture: `fixture/SYN-HEA-002.xyz`
+- SHA-256: `be25b48ae2703ced6b74363afcf41c28306ba5d7eaf79f73c3674024525866f5`
 - Atom count: `16`
 - Coordinate basis: `CARTESIAN_ONLY`
 - Crystallographic semantics: `NONE`
-- Display bounds: `VISUAL_AID_ONLY — NOT A UNIT CELL`
+- Display bounds role: `VISUAL_AID_ONLY`
+- Display bounds is unit cell: `FALSE`
+- Visible boundary label: `CARTESIAN DISPLAY BOUNDS · VISUAL AID — NOT A UNIT CELL`
 
 ## Artifact checks
 
@@ -59,38 +87,46 @@ FAIL
 UNAVAILABLE
 ```
 
-The current manifest records:
+The active manifest records:
 
+- Sequential fixture ID: `PASS`
+- Previous fixtures preserved: `PASS`
 - XYZ parse: `PASS`
 - SHA-256 verification: `PASS`
-- Composition derivation: `PASS`
+- Composition derivation and sum: `PASS`
+- Manifest/UI identity: `PASS`
+- JavaScript syntax: `PASS`
+- License classification: `PASS`
 - Browser render replay: `UNAVAILABLE`
 
 A checkmark in the UI represents only `PASS`. `false` is not used as a substitute for not run, failed, or unavailable.
 
-The render replay contract means the same input, viewer build, recorded initial camera, and representation can recreate the semantic view. It does **not** promise cross-GPU pixel identity.
+The render replay contract means the same input, viewer build, recorded initial camera, and representation can recreate the semantic view. It does **not** promise cross-browser or cross-GPU pixel identity. This release does not claim a replay `PASS` because a managed browser replay environment was unavailable.
 
 ## Recurring showcase contract
 
-Every scheduled Monday / Wednesday / Friday update must:
+Every scheduled synthetic update must:
 
-1. create one new sequential synthetic fixture;
+1. create exactly one new sequential synthetic fixture;
 2. preserve all previous fixture files and identities;
 3. use `RECIPE_CLASS: SYNTHETIC_FIXTURE`;
 4. state `NOMINAL_ATOMIC_COMPOSITION` with an explicit `ATOMIC_PERCENT` basis;
 5. derive percentages from recorded synthetic display-atom counts;
 6. make the percentages sum to 100 within the recorded tolerance;
-7. keep `SCIENTIFIC_VALIDATION: NOT_ASSESSED`;
-8. keep `SCIENTIFIC_CLAIM_STATUS: NONE`;
-9. keep `CRYSTALLOGRAPHIC_SEMANTICS: NONE`;
-10. run deterministic parse, hash, composition, manifest/UI identity, and JavaScript checks before publication.
+7. keep `SCIENTIFIC_HYPOTHESIS_STATUS: NONE`;
+8. keep `SCIENTIFIC_VALIDATION: NOT_ASSESSED`;
+9. keep `SCIENTIFIC_CLAIM_STATUS: NONE`;
+10. keep `DECISION_USABLE: FALSE`;
+11. keep `CRYSTALLOGRAPHIC_SEMANTICS: NONE`;
+12. run deterministic sequential-ID, preservation, parse, hash, composition, manifest/UI identity, JavaScript, and license checks before publication.
 
 A public-source recipe or hypothesis candidate requires a separate human-authorized workflow and must not be silently emitted by the synthetic-fixture automation.
 
 ## Licensing
 
 - Demo HTML, CSS, JavaScript, documentation, and manifest: MIT.
-- Synthetic XYZ fixture and its SHA-256 sidecar: CC0-1.0.
+- Synthetic XYZ fixtures and their SHA-256 sidecars: CC0-1.0.
+- `REUSE.toml` classifies `fixture/*.xyz` and `fixture/*.xyz.sha256` as CC0-1.0, including `SYN-HEA-002`.
 - No ProofRoute name, logo, or proprietary validation/governance core is included in this release.
 
 See `LICENSES.md`, `LICENSES/`, and `REUSE.toml` for file-level scope.
