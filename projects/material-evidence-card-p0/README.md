@@ -7,10 +7,10 @@ This project follows [`MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md`](MATERIAL_EVIDENCE_C
 ## Release status
 
 ```text
-RELEASE: v0.0.4-p0
+RELEASE: v0.0.5-p0
 PURPOSE: PERSONAL_PORTFOLIO_DEMO
 SPECIFICATION: MATERIAL_EVIDENCE_CARD_SPEC_v1.0
-ACTIVE_FIXTURE: SYN-HEA-003
+ACTIVE_FIXTURE: SYN-HEA-004
 RECIPE_CLASS: SYNTHETIC_FIXTURE
 SCIENTIFIC_HYPOTHESIS_STATUS: NONE
 SCIENTIFIC_VALIDATION: NOT_ASSESSED
@@ -38,11 +38,11 @@ This release does **not** establish crystallographic interpretation, phase stabi
 
 | Field | Value |
 |---|---|
-| Fixture ID | `SYN-HEA-003` |
+| Fixture ID | `SYN-HEA-004` |
 | Recipe class | `SYNTHETIC_FIXTURE` |
-| Nominal atomic composition | `Fe 25 at.% · Ni 50 at.% · Cr 25 at.%` |
-| Display notation | `Fe25Ni50Cr25 (at.%)` — non-authoritative |
-| Composition derivation | `4 Fe : 8 Ni : 4 Cr` from 16 synthetic display atoms |
+| Nominal atomic composition | `Fe 25 at.% · Ni 25 at.% · Cr 50 at.%` |
+| Display notation | `Fe25Ni25Cr50 (at.%)` — non-authoritative |
+| Composition derivation | `4 Fe : 4 Ni : 8 Cr` from 16 synthetic display atoms |
 | Atomic-percent total | `100.0` with tolerance `1e-09` |
 | Fixture origin | `GENERATED_IN_PROJECT` |
 | Scientific hypothesis | `NONE` |
@@ -61,6 +61,7 @@ Published fixture files and hashes are immutable within this portfolio series.
 | `SYN-HEA-001` | `Fe 50 at.% · Ni 25 at.% · Cr 25 at.%` | `8 : 4 : 4` | `7c72fef00bf33b72ec312bb8d1badf269da5299885997b2bd5b6e0c4a369306a` |
 | `SYN-HEA-002` | `Fe 37.5 at.% · Ni 37.5 at.% · Cr 25 at.%` | `6 : 6 : 4` | `be25b48ae2703ced6b74363afcf41c28306ba5d7eaf79f73c3674024525866f5` |
 | `SYN-HEA-003` | `Fe 25 at.% · Ni 50 at.% · Cr 25 at.%` | `4 : 8 : 4` | `3ca11e0f108409e162db27859c0fd61902b8c4839c2a7facb80a5d52a4d226e7` |
+| `SYN-HEA-004` | `Fe 25 at.% · Ni 25 at.% · Cr 50 at.%` | `4 : 4 : 8` | `565ea0b005c0985d6359493febc450ac737ebc16e49c366fe16bffb23c16c9fe` |
 
 ## Open locally
 
@@ -68,8 +69,8 @@ Open `index.html` directly in a modern browser. No package installation, web ser
 
 ## Evidence identity
 
-- Active fixture: `fixture/SYN-HEA-003.xyz`
-- SHA-256: `3ca11e0f108409e162db27859c0fd61902b8c4839c2a7facb80a5d52a4d226e7`
+- Active fixture: `fixture/SYN-HEA-004.xyz`
+- SHA-256: `565ea0b005c0985d6359493febc450ac737ebc16e49c366fe16bffb23c16c9fe`
 - Atom count: `16`
 - Coordinate basis: `CARTESIAN_ONLY`
 - Crystallographic semantics: `NONE`
@@ -127,7 +128,7 @@ A public-source recipe or hypothesis candidate requires a separate human-authori
 
 - Demo HTML, CSS, JavaScript, documentation, and manifest: MIT.
 - Synthetic XYZ fixtures and their SHA-256 sidecars: CC0-1.0.
-- `REUSE.toml` classifies `fixture/*.xyz` and `fixture/*.xyz.sha256` as CC0-1.0, including `SYN-HEA-003`.
+- `REUSE.toml` classifies `fixture/*.xyz` and `fixture/*.xyz.sha256` as CC0-1.0, including `SYN-HEA-004`.
 - No ProofRoute name, logo, or proprietary validation/governance core is included in this release.
 
 See `LICENSES.md`, `LICENSES/`, and `REUSE.toml` for file-level scope.
