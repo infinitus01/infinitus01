@@ -1,11 +1,11 @@
-const atoms = [{"el":"Fe","x":-1.46,"y":-1.46,"z":-1.46},{"el":"Cr","x":0.0,"y":0.0,"z":0.0},{"el":"Ni","x":-1.46,"y":-1.46,"z":1.46},{"el":"Cr","x":0.0,"y":0.0,"z":2.92},{"el":"Cr","x":-1.46,"y":1.46,"z":-1.46},{"el":"Ni","x":0.0,"y":2.92,"z":0.0},{"el":"Cr","x":-1.46,"y":1.46,"z":1.46},{"el":"Ni","x":0.0,"y":2.92,"z":2.92},{"el":"Ni","x":1.46,"y":-1.46,"z":-1.46},{"el":"Cr","x":2.92,"y":0.0,"z":0.0},{"el":"Cr","x":1.46,"y":-1.46,"z":1.46},{"el":"Ni","x":2.92,"y":0.0,"z":2.92},{"el":"Ni","x":1.46,"y":1.46,"z":-1.46},{"el":"Cr","x":2.92,"y":2.92,"z":0.0},{"el":"Cr","x":1.46,"y":1.46,"z":1.46},{"el":"Fe","x":2.92,"y":2.92,"z":2.92}];
+const atoms = [{"el":"Fe","x":-1.47,"y":-1.47,"z":-1.47},{"el":"Cr","x":0.0,"y":0.0,"z":0.0},{"el":"Fe","x":-1.47,"y":-1.47,"z":1.47},{"el":"Cr","x":0.0,"y":0.0,"z":2.94},{"el":"Cr","x":-1.47,"y":1.47,"z":-1.47},{"el":"Fe","x":0.0,"y":2.94,"z":0.0},{"el":"Cr","x":-1.47,"y":1.47,"z":1.47},{"el":"Ni","x":0.0,"y":2.94,"z":2.94},{"el":"Fe","x":1.47,"y":-1.47,"z":-1.47},{"el":"Cr","x":2.94,"y":0.0,"z":0.0},{"el":"Cr","x":1.47,"y":-1.47,"z":1.47},{"el":"Fe","x":2.94,"y":0.0,"z":2.94},{"el":"Ni","x":1.47,"y":1.47,"z":-1.47},{"el":"Cr","x":2.94,"y":2.94,"z":0.0},{"el":"Cr","x":1.47,"y":1.47,"z":1.47},{"el":"Fe","x":2.94,"y":2.94,"z":2.94}];
 const colors={Fe:['#d9e0e8','#8994a1'],Ni:['#9ec3ff','#446ea9'],Cr:['#9ff2d3','#367c68']};
 const canvas=document.getElementById('stage'),ctx=canvas.getContext('2d'),tip=document.getElementById('tooltip');
 let W=0,H=0,dpr=1,rx=-.52,ry=.67,zoom=1,spin=true,mode=0,drag=false,lastX=0,lastY=0,projected=[];
-const a=2.92,cell=2*a,center=cell/2-a/2;
+const a=2.94,cell=2*a,center=cell/2-a/2;
 const cube=[[-a/2,-a/2,-a/2],[cell-a/2,-a/2,-a/2],[cell-a/2,cell-a/2,-a/2],[-a/2,cell-a/2,-a/2],[-a/2,-a/2,cell-a/2],[cell-a/2,-a/2,cell-a/2],[cell-a/2,cell-a/2,cell-a/2],[-a/2,cell-a/2,cell-a/2]].map(([x,y,z])=>({x:x-center,y:y-center,z:z-center}));
 const edges=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
-const bonds=[];for(let i=0;i<atoms.length;i++)for(let j=i+1;j<atoms.length;j++){let p=atoms[i],q=atoms[j],d=Math.hypot(p.x-q.x,p.y-q.y,p.z-q.z);if(d<2.60)bonds.push([i,j]);}
+const bonds=[];for(let i=0;i<atoms.length;i++)for(let j=i+1;j<atoms.length;j++){let p=atoms[i],q=atoms[j],d=Math.hypot(p.x-q.x,p.y-q.y,p.z-q.z);if(d<2.62)bonds.push([i,j]);}
 function resize(){const r=canvas.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
 function rotate(p){let cy=Math.cos(ry),sy=Math.sin(ry),cx=Math.cos(rx),sx=Math.sin(rx);let x=p.x*cy+p.z*sy,z=-p.x*sy+p.z*cy,y=p.y;return{x,y:y*cx-z*sx,z:y*sx+z*cx};}
 function proj(p){let r=rotate(p),s=Math.min(W,H)*.103*zoom,pers=7.5/(7.5+r.z*.22);return{x:W*.49+r.x*s*pers,y:H*.52-r.y*s*pers,z:r.z,scale:pers};}

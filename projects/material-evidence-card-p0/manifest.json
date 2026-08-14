@@ -5,9 +5,9 @@
     "version": "1.0",
     "path": "MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md"
   },
-  "release": "v0.0.6-p0",
+  "release": "v0.0.7-p0",
   "purpose": "PERSONAL_PORTFOLIO_DEMO",
-  "fixture_id": "SYN-HEA-005",
+  "fixture_id": "SYN-HEA-006",
   "recipe_class": "SYNTHETIC_FIXTURE",
   "fixture_type": "SYNTHETIC_VISUALIZATION_FIXTURE",
   "source_provenance": {
@@ -16,87 +16,41 @@
     "source_reference": null,
     "reuse_license": "CC0-1.0"
   },
-  "structure_file": "fixture/SYN-HEA-005.xyz",
-  "structure_sha256": "8c4e51c815c2f9e0721a29c2434b4b4e713e69e6730c5b8c4a5be1e2a2350764",
+  "structure_file": "fixture/SYN-HEA-006.xyz",
+  "structure_sha256": "8702099895d63a2bff064be60b10ce9d910c06dbf5767a322769b0a90524ccf7",
   "atom_count": 16,
   "nominal_atomic_composition": {
     "basis": "ATOMIC_PERCENT",
     "derivation": "DISPLAY_ATOM_COUNT",
-    "display_notation": "Fe12.5Ni37.5Cr50 (at.%)",
+    "display_notation": "Fe37.5Ni12.5Cr50 (at.%)",
     "display_notation_authority": "NON_AUTHORITATIVE",
     "total_atomic_percent": 100.0,
     "tolerance": 1e-09,
     "components": {
-      "Fe": {
-        "display_atom_count": 2,
-        "atomic_percent": 12.5
-      },
-      "Ni": {
-        "display_atom_count": 6,
-        "atomic_percent": 37.5
-      },
-      "Cr": {
-        "display_atom_count": 8,
-        "atomic_percent": 50.0
-      }
+      "Fe": {"display_atom_count": 6, "atomic_percent": 37.5},
+      "Ni": {"display_atom_count": 2, "atomic_percent": 12.5},
+      "Cr": {"display_atom_count": 8, "atomic_percent": 50.0}
     }
   },
   "coordinate_basis": "CARTESIAN_ONLY",
   "crystallographic_semantics": "NONE",
   "display_arrangement": "BCC-like visual arrangement only",
-  "display_spacing_angstrom": 2.92,
+  "display_spacing_angstrom": 2.94,
   "display_bounds_role": "VISUAL_AID_ONLY",
   "display_bounds_is_unit_cell": false,
   "scientific_hypothesis_status": "NONE",
   "scientific_validation": "NOT_ASSESSED",
   "scientific_claim_status": "NONE",
   "decision_usable": false,
-  "artifact_check_status_enum": [
-    "NOT_RUN",
-    "PASS",
-    "FAIL",
-    "UNAVAILABLE"
-  ],
+  "artifact_check_status_enum": ["NOT_RUN", "PASS", "FAIL", "UNAVAILABLE"],
   "artifact_checks": {
-    "parse": {
-      "status": "PASS",
-      "parser_version": "release-validator/0.5",
-      "atom_count": 16
-    },
-    "hash_verification": {
-      "status": "PASS",
-      "expected_sha256": "8c4e51c815c2f9e0721a29c2434b4b4e713e69e6730c5b8c4a5be1e2a2350764",
-      "computed_sha256": "8c4e51c815c2f9e0721a29c2434b4b4e713e69e6730c5b8c4a5be1e2a2350764",
-      "verifier": "release-validator/0.5"
-    },
-    "composition_derivation": {
-      "status": "PASS",
-      "method": "ELEMENT_COUNT_DIVIDED_BY_TOTAL_DISPLAY_ATOMS",
-      "sum_atomic_percent": 100.0,
-      "tolerance": 1e-09
-    },
-    "manifest_ui_identity": {
-      "status": "PASS",
-      "verifier": "release-validator/0.5"
-    },
-    "javascript_syntax": {
-      "status": "PASS",
-      "runtime": "node --check",
-      "verifier": "release-validator/0.5"
-    },
-    "license_classification": {
-      "status": "PASS",
-      "mapping": "REUSE.toml fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0",
-      "verifier": "release-validator/0.5"
-    },
-    "render_replay": {
-      "status": "UNAVAILABLE",
-      "viewer_build": "material-evidence-card/v0.0.6-p0",
-      "camera_preset": "INITIAL_ISOMETRIC",
-      "representation": "BALL_AND_STICK",
-      "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY",
-      "reason": "A managed browser replay environment was not available for this release; no replay PASS is claimed."
-    }
+    "parse": {"status": "PASS", "parser_version": "release-validator/0.6", "atom_count": 16},
+    "hash_verification": {"status": "PASS", "expected_sha256": "8702099895d63a2bff064be60b10ce9d910c06dbf5767a322769b0a90524ccf7", "computed_sha256": "8702099895d63a2bff064be60b10ce9d910c06dbf5767a322769b0a90524ccf7", "verifier": "release-validator/0.6"},
+    "composition_derivation": {"status": "PASS", "method": "ELEMENT_COUNT_DIVIDED_BY_TOTAL_DISPLAY_ATOMS", "sum_atomic_percent": 100.0, "tolerance": 1e-09},
+    "manifest_ui_identity": {"status": "PASS", "verifier": "release-validator/0.6"},
+    "javascript_syntax": {"status": "PASS", "runtime": "node --check", "verifier": "release-validator/0.6"},
+    "license_classification": {"status": "PASS", "mapping": "REUSE.toml fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0", "verifier": "release-validator/0.6"},
+    "render_replay": {"status": "UNAVAILABLE", "viewer_build": "material-evidence-card/v0.0.7-p0", "camera_preset": "INITIAL_ISOMETRIC", "representation": "BALL_AND_STICK", "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY", "reason": "Managed browser replay environment unavailable; no replay PASS is claimed."}
   },
   "publication_gate": {
     "sequential_fixture_id": "PASS",
@@ -110,10 +64,10 @@
     "license_classification": "PASS"
   },
   "notes": [
-    "Coordinates and composition are synthetic and were generated for interface demonstration.",
-    "Nominal atomic composition is derived from the 16 synthetic display atoms.",
+    "Coordinates and composition are synthetic and generated for interface demonstration.",
+    "Nominal atomic composition is derived from 16 synthetic display atoms.",
     "Compact display notation is non-authoritative; per-element counts, basis, and derivation are authoritative.",
-    "No phase stability, performance, manufacturability, experimental, optimization, or recommendation claim is made.",
+    "No material-science conclusion or recommendation is made.",
     "The display bounds are not a unit cell.",
     "The webpage embeds the same coordinate fixture for offline portability."
   ]
