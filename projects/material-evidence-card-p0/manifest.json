@@ -56,7 +56,12 @@
       "camera_preset": "INITIAL_ISOMETRIC",
       "representation": "BALL_AND_STICK",
       "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY",
-      "runner": "mec-render-replay/1.0.0",
+      "runner": "mec-render-replay/1.0.1",
+      "post_ready_layout_guard": {
+        "max_css_drift_device_px": 0.5,
+        "backing_store_must_match": true,
+        "dpr_must_match": true
+      },
       "workflow": ".github/workflows/material-evidence-card-replay.yml",
       "reason": "The patched viewer has not yet received an authoritative CI browser observation; no replay PASS is claimed.",
       "prior_release_observation": {

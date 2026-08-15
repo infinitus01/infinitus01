@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import {
   REPLAY_STATUS,
   RUNNER_STATUS,
+  applyDeclaredPassGate,
   buildBondPairs,
   buildSemanticPayload,
   canonicalJson,
@@ -16,6 +17,7 @@ import {
   parseEmbeddedAtoms,
   semanticDigest,
   validateFixtureGrowth,
+  validatePostReadyLayout,
   validateRuntimeReceipt,
   verifyFrozenFixturePair,
   verifyReleaseIdentity
@@ -42,6 +44,11 @@ function validRuntime() {
     mode: 0,
     spin: false,
     animation_loop: false,
+    post_ready_layout_guard: {
+      max_css_drift_device_px: 0.5,
+      backing_store_must_match: true,
+      dpr_must_match: true
+    },
     atom_count: 2,
     element_counts: { Cr: 1, Fe: 1 },
     ordered_atoms: expectedAtoms.map(atom => ({ ...atom })),
@@ -70,6 +77,8 @@ test("artifact status stays four-state while runner infrastructure is separate",
   assert.equal(classifyReplayObservation({ browser_launched: true, ready_timeout: true }).status, REPLAY_STATUS.FAIL);
   assert.equal(classifyReplayObservation({ browser_launched: true, blank_canvas: true }).status, REPLAY_STATUS.FAIL);
   assert.equal(classifyReplayObservation({ browser_launched: true, semantic_digest_match: false }).status, REPLAY_STATUS.FAIL);
+  assert.equal(classifyReplayObservation({ browser_launched: true, post_observation_invalidated: true }).classification_code, "POST_OBSERVATION_STATE_INVALIDATED");
+  assert.equal(classifyReplayObservation({ browser_launched: true, post_observation_layout_mismatch: true }).classification_code, "POST_OBSERVATION_LAYOUT_MISMATCH");
   assert.equal(classifyReplayObservation({ browser_launched: true, diagnostic_errors: ["SCREENSHOT_FAILED"] }).status, REPLAY_STATUS.PASS);
   assert.equal(classifyReplayObservation({ browser_launched: true, page_receipt_invalid: true }).classification_code, "PAGE_RECEIPT_INVALID");
   assert.equal(classifyReplayObservation({ browser_launched: true, source_mode_mismatch: true }).classification_code, "SOURCE_MODE_MISMATCH");
@@ -79,6 +88,28 @@ test("artifact status stays four-state while runner infrastructure is separate",
   assert.equal(infrastructure.status, REPLAY_STATUS.NOT_RUN);
   assert.equal(infrastructure.runner_status, RUNNER_STATUS.INFRA_ERROR);
   assert.equal(infrastructure.publication_effect, "BLOCK");
+});
+
+test("a declared PASS blocks publication unless the exact candidate also observes PASS", () => {
+  const unavailable = applyDeclaredPassGate({
+    declaredStatus: REPLAY_STATUS.PASS,
+    observedStatus: REPLAY_STATUS.UNAVAILABLE,
+    effectiveStatus: REPLAY_STATUS.UNAVAILABLE,
+    publicationEffect: "ALLOW_WITH_DISCLOSED_LIMIT"
+  });
+  assert.equal(unavailable.blocked, true);
+  assert.equal(unavailable.effective_status, REPLAY_STATUS.FAIL);
+  assert.equal(unavailable.publication_effect, "BLOCK");
+
+  const pass = applyDeclaredPassGate({
+    declaredStatus: REPLAY_STATUS.PASS,
+    observedStatus: REPLAY_STATUS.PASS,
+    effectiveStatus: REPLAY_STATUS.PASS,
+    publicationEffect: "ALLOW"
+  });
+  assert.equal(pass.blocked, false);
+  assert.equal(pass.effective_status, REPLAY_STATUS.PASS);
+  assert.equal(pass.publication_effect, "ALLOW");
 });
 
 test("runtime receipt rejects malformed or non-spatial observations", () => {
@@ -113,6 +144,53 @@ test("semantic digest binds projection but excludes backing-store DPR metadata",
   const moved = validRuntime();
   moved.projected_atoms[0].x += 0.25;
   assert.notEqual(semanticDigest(buildSemanticPayload(first)), semanticDigest(buildSemanticPayload(moved)));
+});
+
+test("native viewer tolerates subpixel layout jitter but guards material READY changes", async () => {
+  const viewerText = await readFile(path.join(projectDir, "viewer.js"), "utf8");
+  assert.match(viewerText, /const REPLAY_LAYOUT_TOLERANCE_DEVICE_PX=\.5;/);
+  assert.match(viewerText, /function replayLayoutChanged\(measurement\)\{const baseline=replayReceipt\?\.canvas_observation;/);
+  assert.match(viewerText, /const cssTolerance=REPLAY_LAYOUT_TOLERANCE_DEVICE_PX\/baseline\.dpr;/);
+  assert.match(viewerText, /canvas\.width!==baseline\.pixel_width\|\|canvas\.height!==baseline\.pixel_height/);
+  assert.match(viewerText, /measurement\.pixelWidth!==baseline\.pixel_width\|\|measurement\.pixelHeight!==baseline\.pixel_height/);
+  assert.match(viewerText, /Math\.abs\(measurement\.width-baseline\.css_width\)>cssTolerance/);
+  assert.match(viewerText, /Math\.abs\(measurement\.height-baseline\.css_height\)>cssTolerance/);
+  const observerSource = viewerText.slice(viewerText.indexOf("new ResizeObserver"));
+  assert.match(observerSource, /replayLayoutChanged\(measurement\)/);
+  assert.doesNotMatch(observerSource, /Math\.abs\(W-measurement\.width\)/);
+  assert.doesNotMatch(observerSource, /Math\.abs\(H-measurement\.height\)/);
+});
+
+test("post-READY layout policy gates tolerance, rounding boundaries, and backing tamper", () => {
+  const baseline = { css_width: 100.25, css_height: 80, pixel_width: 100, pixel_height: 80, dpr: 1 };
+  const guard = { max_css_drift_device_px: 0.5, backing_store_must_match: true, dpr_must_match: true };
+  const stable = {
+    css_width: 100.49,
+    css_height: 80,
+    pixel_width: 100,
+    pixel_height: 80,
+    replay_dpr: 1,
+    expected_pixel_width: 100,
+    expected_pixel_height: 80
+  };
+  assert.equal(validatePostReadyLayout(baseline, stable, guard).valid, true);
+
+  const materialDrift = { ...stable, css_width: 101, expected_pixel_width: 101 };
+  assert.ok(validatePostReadyLayout(baseline, materialDrift, guard).errors.includes("POST_READY_CSS_DRIFT_EXCEEDED"));
+
+  const roundBoundary = {
+    ...stable,
+    css_width: 100.51,
+    expected_pixel_width: 101
+  };
+  assert.ok(validatePostReadyLayout(
+    { ...baseline, css_width: 100.49 },
+    roundBoundary,
+    guard
+  ).errors.includes("POST_READY_EXPECTED_BACKING_CHANGED"));
+
+  const backingTamper = { ...stable, pixel_width: 101 };
+  assert.ok(validatePostReadyLayout(baseline, backingTamper, guard).errors.includes("POST_READY_BACKING_STORE_CHANGED"));
 });
 
 test("historical bond cutoffs are parsed from each exact viewer build", () => {

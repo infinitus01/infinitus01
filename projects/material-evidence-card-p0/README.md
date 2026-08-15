@@ -111,6 +111,8 @@ The render replay contract means the same input, viewer build, recorded initial 
 
 Open `index.html?replay=1` to activate the native replay contract. In this mode the viewer fixes the initial camera and ball-and-stick representation, disables rotation and controls, waits for a stable canvas layout, renders once, and publishes a read-only `window.__MEC_REPLAY__` observation API. The page may report only `READY` or `ERROR`; it cannot award itself `PASS`.
 
+After `READY`, the receipt-bound layout guard permits at most `0.5` device pixel of CSS measurement jitter. The recorded and expected canvas backing dimensions and replay DPR must remain unchanged; a larger or rounding-boundary layout change clears the receipt and moves the page to `ERROR`.
+
 The external runner:
 
 1. verifies manifest, XYZ, SHA-256 sidecar, embedded atom order, and the fixed display translation;
@@ -118,7 +120,8 @@ The external runner:
 3. runs two fresh browser contexts per target;
 4. validates the page receipt shape and finite projected coordinates, samples every projected atom center on the canvas, and rejects camera, representation, or semantic-digest drift;
 5. binds every result—including `NOT_RUN` and `UNAVAILABLE`—to the requested commit and exact manifest/index/styles/viewer/XYZ hashes;
-6. writes a JSON receipt, SHA-256 sidecar, and diagnostic canvas screenshots.
+6. binds the runner, policy core, package metadata/lockfile, and workflow bytes into the receipt;
+7. writes a JSON receipt, SHA-256 sidecar, and diagnostic canvas screenshots.
 
 The retrospective observations do not supersede the historical manifests. Run locally with:
 

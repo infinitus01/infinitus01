@@ -9,6 +9,7 @@ import {
   REPLAY_STATUS,
   RUNNER_STATUS,
   aggregateStatuses,
+  applyDeclaredPassGate,
   buildBondPairs,
   buildSemanticPayload,
   canonicalJson,
@@ -16,11 +17,12 @@ import {
   countElements,
   semanticDigest,
   sha256,
+  validatePostReadyLayout,
   validateRuntimeReceipt,
   verifyReleaseIdentity
 } from "./replay-core.mjs";
 
-const RUNNER_VERSION = "mec-render-replay/1.0.0";
+const RUNNER_VERSION = "mec-render-replay/1.0.1";
 const VIEWPORT = Object.freeze({ width: 1440, height: 1100 });
 const DEVICE_SCALE_FACTOR = 1;
 const READY_TIMEOUT_MS = 8_000;
@@ -349,6 +351,7 @@ function runtimeMismatch(runtime, subjectData, nativeMode) {
     source_mode_mismatch: runtime.source_mode !== "EMBEDDED_COORDINATES",
     transformation_mismatch: runtime.transformation !== "FIXED_TRANSLATION_ONLY",
     runtime_hash_authority_mismatch: runtime.runtime_structure_hash_verified !== false,
+    layout_guard_mismatch: nativeMode && canonicalJson(runtime.post_ready_layout_guard) !== canonicalJson(expectedReplay.post_ready_layout_guard),
     spin_enabled: runtime.spin !== false,
     unexpected_animation_loop: nativeMode && runtime.animation_loop !== false,
     atom_mismatch: canonicalJson(runtime.ordered_atoms) !== canonicalJson(expected),
@@ -383,6 +386,7 @@ async function runAttempt(browser, targetDir, target, subjectData, attemptNumber
   let readyTimeout = false;
   let runtimeError = null;
   let postObservation = null;
+  let postObservationInvalidated = false;
   let runtimeValidation = null;
   const diagnosticErrors = [];
 
@@ -417,20 +421,37 @@ async function runAttempt(browser, targetDir, target, subjectData, attemptNumber
   }
 
   if (nativeMode && runtime) {
-    postObservation = await page.evaluate(() => {
+    postObservation = await page.evaluate(baselineDpr => {
       const spinButton = document.getElementById("spinBtn");
+      const canvasElement = document.getElementById("stage");
+      const rect = canvasElement?.getBoundingClientRect();
       return {
         status: globalThis.__MEC_REPLAY__?.status || null,
         receipt: globalThis.__MEC_REPLAY__?.getReceipt?.() || null,
+        error: globalThis.__MEC_REPLAY__?.getError?.() || null,
+        canvas_layout: canvasElement && rect ? {
+          css_width: rect.width,
+          css_height: rect.height,
+          pixel_width: canvasElement.width,
+          pixel_height: canvasElement.height,
+          replay_dpr: baselineDpr,
+          expected_pixel_width: Math.round(rect.width * baselineDpr),
+          expected_pixel_height: Math.round(rect.height * baselineDpr),
+          viewport_width: globalThis.innerWidth,
+          viewport_height: globalThis.innerHeight,
+          scroll_x: globalThis.scrollX,
+          scroll_y: globalThis.scrollY
+        } : null,
         ui: {
           spin_button_disabled: spinButton?.disabled === true,
           spin_button_active: spinButton?.classList.contains("active") === true,
           spin_button_text: spinButton?.textContent || null
         }
       };
-    }).catch(error => ({ status: "EVALUATION_ERROR", receipt: null, ui: null, error: String(error) }));
+    }, runtime.canvas_observation.dpr).catch(error => ({ status: "EVALUATION_ERROR", receipt: null, ui: null, error: String(error) }));
     if (postObservation.status !== "READY" || canonicalJson(postObservation.receipt) !== canonicalJson(runtime)) {
-      errors.page.push("NATIVE_REPLAY_STATE_INVALIDATED_AFTER_OBSERVATION");
+      postObservationInvalidated = true;
+      errors.page.push(`NATIVE_REPLAY_STATE_INVALIDATED_AFTER_OBSERVATION:${postObservation.error?.code || postObservation.status || "UNKNOWN"}`);
     }
   }
 
@@ -443,6 +464,15 @@ async function runAttempt(browser, targetDir, target, subjectData, attemptNumber
         || diagnostics.height !== runtime.canvas_observation.pixel_height;
       mismatches.projection_mismatch = mismatches.projection_mismatch
         || diagnostics.projected_atom_centers_sampled !== runtime.projected_atoms.length;
+      if (nativeMode) {
+        const postLayoutValidation = validatePostReadyLayout(
+          runtime.canvas_observation,
+          postObservation?.canvas_layout,
+          runtime.post_ready_layout_guard
+        );
+        mismatches.post_observation_layout_mismatch = !postLayoutValidation.valid;
+        postObservation.layout_validation = postLayoutValidation;
+      }
     } catch (error) {
       runtimeValidation = {
         valid: false,
@@ -469,6 +499,7 @@ async function runAttempt(browser, targetDir, target, subjectData, attemptNumber
     console_errors: errors.console,
     asset_errors: errors.asset,
     blank_canvas: diagnostics.blank,
+    post_observation_invalidated: postObservationInvalidated,
     ...mismatches
   };
   const classification = classifyReplayObservation(observation);
@@ -561,11 +592,21 @@ async function runTarget(browser, targetDir, target, outputDir, subjectData = nu
   };
 }
 
-function baseReceipt(environment = {}) {
+async function baseReceipt(environment = {}) {
+  const runnerFiles = {
+    render_replay: path.join(projectDir, "tools", "render-replay.mjs"),
+    replay_core: path.join(projectDir, "tools", "replay-core.mjs"),
+    package: path.join(projectDir, "package.json"),
+    package_lock: path.join(projectDir, "package-lock.json"),
+    workflow: path.join(repoRoot, ".github", "workflows", "material-evidence-card-replay.yml")
+  };
+  const runnerFileSha256 = Object.fromEntries(await Promise.all(
+    Object.entries(runnerFiles).map(async ([name, filePath]) => [name, sha256(await readFile(filePath))])
+  ));
   return {
     receipt_schema: "MEC_RENDER_REPLAY_RECEIPT_V1",
     generated_at: new Date().toISOString(),
-    runner: { name: RUNNER_VERSION, status: RUNNER_STATUS.COMPLETED },
+    runner: { name: RUNNER_VERSION, status: RUNNER_STATUS.COMPLETED, file_sha256: runnerFileSha256 },
     environment: {
       platform: process.platform,
       architecture: process.arch,
@@ -585,7 +626,9 @@ function baseReceipt(environment = {}) {
       retroactive_release_status_changed: false
     },
     requested_targets: [],
-    targets: []
+    targets: [],
+    declared_active_render_status: null,
+    declared_status_gate: null
   };
 }
 
@@ -598,6 +641,21 @@ async function finalize(options, receipt, {
     ? "BLOCK"
     : PUBLICATION_EFFECT[renderStatus]
 }) {
+  const declaredGate = applyDeclaredPassGate({
+    declaredStatus: receipt.declared_active_render_status,
+    observedStatus: renderStatus,
+    effectiveStatus,
+    runnerStatus,
+    publicationEffect
+  });
+  effectiveStatus = declaredGate.effective_status;
+  publicationEffect = declaredGate.publication_effect;
+  receipt.declared_status_gate = {
+    declared_status: receipt.declared_active_render_status,
+    observed_status: renderStatus,
+    authoritative_pass_required: receipt.declared_active_render_status === REPLAY_STATUS.PASS,
+    blocked: declaredGate.blocked
+  };
   receipt.runner.status = runnerStatus;
   receipt.runner.classification_code = runnerStatus === RUNNER_STATUS.INFRA_ERROR ? classificationCode : null;
   receipt.render_replay = {
@@ -613,6 +671,8 @@ async function finalize(options, receipt, {
     authority_boundary: receipt.authority_boundary,
     requested_targets: receipt.requested_targets,
     targets: receipt.targets,
+    declared_active_render_status: receipt.declared_active_render_status,
+    declared_status_gate: receipt.declared_status_gate,
     render_replay: receipt.render_replay,
     effective_status: receipt.effective_status,
     publication_effect: receipt.publication_effect
@@ -636,7 +696,7 @@ async function finalize(options, receipt, {
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   await mkdir(options.output_dir, { recursive: true });
-  const receipt = baseReceipt();
+  const receipt = await baseReceipt();
   let browser;
   let tempRoot;
   try {
@@ -650,6 +710,7 @@ async function main() {
       adapter: target.adapter
     }));
     const prepared = await prepareTargets(targets, tempRoot);
+    receipt.declared_active_render_status = prepared.at(-1)?.subjectData.manifest.artifact_checks?.render_replay?.status || null;
     const preflightFailed = prepared.some(item => item.subjectData.identity.status !== REPLAY_STATUS.PASS);
     if (preflightFailed) {
       receipt.targets = prepared.map(({ target, subjectData }) => unexecutedTarget(

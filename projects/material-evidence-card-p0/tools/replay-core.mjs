@@ -19,6 +19,24 @@ export const PUBLICATION_EFFECT = Object.freeze({
   UNAVAILABLE: "ALLOW_WITH_DISCLOSED_LIMIT"
 });
 
+export function applyDeclaredPassGate({
+  declaredStatus,
+  observedStatus,
+  effectiveStatus = observedStatus,
+  runnerStatus = RUNNER_STATUS.COMPLETED,
+  publicationEffect = PUBLICATION_EFFECT[observedStatus]
+}) {
+  const blocked = declaredStatus === REPLAY_STATUS.PASS
+    && (observedStatus !== REPLAY_STATUS.PASS
+      || effectiveStatus !== REPLAY_STATUS.PASS
+      || runnerStatus !== RUNNER_STATUS.COMPLETED);
+  return {
+    blocked,
+    effective_status: blocked ? REPLAY_STATUS.FAIL : effectiveStatus,
+    publication_effect: blocked ? "BLOCK" : publicationEffect
+  };
+}
+
 export function sha256(value) {
   return createHash("sha256").update(value).digest("hex");
 }
@@ -265,6 +283,7 @@ export function buildSemanticPayload(runtime) {
     mode: runtime.mode,
     spin: runtime.spin,
     animation_loop: runtime.animation_loop,
+    post_ready_layout_guard: runtime.post_ready_layout_guard || null,
     atom_count: runtime.atom_count,
     element_counts: runtime.element_counts,
     ordered_atoms: runtime.ordered_atoms.map(atom => ({
@@ -303,6 +322,40 @@ function isNonNegativeInteger(value) {
   return Number.isInteger(value) && value >= 0;
 }
 
+export function validatePostReadyLayout(baseline, observed, guard) {
+  const errors = [];
+  if (!isRecord(baseline) || !isRecord(observed) || !isRecord(guard)) {
+    return { valid: false, errors: ["POST_READY_LAYOUT_SHAPE_INVALID"] };
+  }
+  const numericFields = ["css_width", "css_height", "pixel_width", "pixel_height", "dpr"];
+  if (numericFields.some(field => !isFiniteNumber(baseline[field]))) errors.push("POST_READY_LAYOUT_BASELINE_INVALID");
+  if (["css_width", "css_height", "pixel_width", "pixel_height", "replay_dpr", "expected_pixel_width", "expected_pixel_height"]
+    .some(field => !isFiniteNumber(observed[field]))) errors.push("POST_READY_LAYOUT_OBSERVATION_INVALID");
+  if (!isFiniteNumber(guard.max_css_drift_device_px) || guard.max_css_drift_device_px < 0) {
+    errors.push("POST_READY_LAYOUT_TOLERANCE_INVALID");
+  }
+  if (errors.length) return { valid: false, errors };
+
+  const cssWidthDrift = Math.abs(observed.css_width - baseline.css_width) * baseline.dpr;
+  const cssHeightDrift = Math.abs(observed.css_height - baseline.css_height) * baseline.dpr;
+  if (guard.backing_store_must_match === true
+    && (observed.pixel_width !== baseline.pixel_width || observed.pixel_height !== baseline.pixel_height)) {
+    errors.push("POST_READY_BACKING_STORE_CHANGED");
+  }
+  if (observed.expected_pixel_width !== baseline.pixel_width || observed.expected_pixel_height !== baseline.pixel_height) {
+    errors.push("POST_READY_EXPECTED_BACKING_CHANGED");
+  }
+  if (guard.dpr_must_match === true && observed.replay_dpr !== baseline.dpr) errors.push("POST_READY_DPR_CHANGED");
+  if (cssWidthDrift > guard.max_css_drift_device_px || cssHeightDrift > guard.max_css_drift_device_px) {
+    errors.push("POST_READY_CSS_DRIFT_EXCEEDED");
+  }
+  return {
+    valid: errors.length === 0,
+    errors,
+    css_drift_device_px: { width: cssWidthDrift, height: cssHeightDrift }
+  };
+}
+
 export function validateRuntimeReceipt(runtime, expectedAtoms, { nativeMode = false } = {}) {
   const errors = [];
   const expectedSchema = nativeMode ? "MEC_PAGE_OBSERVATION_V1" : "MEC_LEGACY_PAGE_OBSERVATION_V1";
@@ -317,6 +370,12 @@ export function validateRuntimeReceipt(runtime, expectedAtoms, { nativeMode = fa
   if (!Number.isInteger(runtime.mode)) errors.push("MODE_INVALID");
   if (typeof runtime.spin !== "boolean") errors.push("SPIN_INVALID");
   if (typeof runtime.animation_loop !== "boolean") errors.push("ANIMATION_LOOP_INVALID");
+  if (nativeMode && (!isRecord(runtime.post_ready_layout_guard)
+    || runtime.post_ready_layout_guard.max_css_drift_device_px !== 0.5
+    || runtime.post_ready_layout_guard.backing_store_must_match !== true
+    || runtime.post_ready_layout_guard.dpr_must_match !== true)) {
+    errors.push("POST_READY_LAYOUT_GUARD_INVALID");
+  }
   if (!isNonNegativeInteger(runtime.atom_count)) errors.push("ATOM_COUNT_INVALID");
 
   if (!isRecord(runtime.camera)) {
@@ -425,6 +484,7 @@ export function classifyReplayObservation(observation) {
 
   const failure = [
     [observation.ready_timeout, "READY_TIMEOUT"],
+    [observation.post_observation_invalidated, "POST_OBSERVATION_STATE_INVALIDATED"],
     [observation.page_errors?.length, "PAGE_ERROR"],
     [observation.console_errors?.length, "CONSOLE_ERROR"],
     [observation.page_receipt_invalid, "PAGE_RECEIPT_INVALID"],
@@ -437,6 +497,7 @@ export function classifyReplayObservation(observation) {
     [observation.source_mode_mismatch, "SOURCE_MODE_MISMATCH"],
     [observation.transformation_mismatch, "TRANSFORMATION_MISMATCH"],
     [observation.runtime_hash_authority_mismatch, "RUNTIME_HASH_AUTHORITY_MISMATCH"],
+    [observation.layout_guard_mismatch, "LAYOUT_GUARD_MISMATCH"],
     [observation.replay_ui_mismatch, "REPLAY_UI_STATE_MISMATCH"],
     [observation.spin_enabled, "SPIN_NOT_DISABLED"],
     [observation.unexpected_animation_loop, "ANIMATION_LOOP_ACTIVE"],
@@ -446,6 +507,7 @@ export function classifyReplayObservation(observation) {
     [observation.count_mismatch, "RUNTIME_COUNT_MISMATCH"],
     [observation.draw_mismatch, "RUNTIME_DRAW_COUNT_MISMATCH"],
     [observation.canvas_mismatch, "CANVAS_OBSERVATION_MISMATCH"],
+    [observation.post_observation_layout_mismatch, "POST_OBSERVATION_LAYOUT_MISMATCH"],
     [observation.projection_mismatch, "PROJECTION_MISMATCH"],
     [observation.semantic_digest_match === false, "SEMANTIC_DIGEST_MISMATCH"]
   ].find(([condition]) => Boolean(condition));
