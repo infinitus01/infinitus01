@@ -5,7 +5,7 @@
     "version": "1.0",
     "path": "MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md"
   },
-  "release": "v0.0.7-p0",
+  "release": "v0.0.7-p0+replay.1",
   "purpose": "PERSONAL_PORTFOLIO_DEMO",
   "fixture_id": "SYN-HEA-006",
   "recipe_class": "SYNTHETIC_FIXTURE",
@@ -44,13 +44,27 @@
   "decision_usable": false,
   "artifact_check_status_enum": ["NOT_RUN", "PASS", "FAIL", "UNAVAILABLE"],
   "artifact_checks": {
-    "parse": {"status": "PASS", "parser_version": "release-validator/0.6", "atom_count": 16},
-    "hash_verification": {"status": "PASS", "expected_sha256": "8702099895d63a2bff064be60b10ce9d910c06dbf5767a322769b0a90524ccf7", "computed_sha256": "8702099895d63a2bff064be60b10ce9d910c06dbf5767a322769b0a90524ccf7", "verifier": "release-validator/0.6"},
+    "parse": {"status": "PASS", "parser_version": "release-validator/0.11", "atom_count": 16},
+    "hash_verification": {"status": "PASS", "expected_sha256": "8702099895d63a2bff064be60b10ce9d910c06dbf5767a322769b0a90524ccf7", "computed_sha256": "8702099895d63a2bff064be60b10ce9d910c06dbf5767a322769b0a90524ccf7", "verifier": "release-validator/0.11"},
     "composition_derivation": {"status": "PASS", "method": "ELEMENT_COUNT_DIVIDED_BY_TOTAL_DISPLAY_ATOMS", "sum_atomic_percent": 100.0, "tolerance": 1e-09},
-    "manifest_ui_identity": {"status": "PASS", "verifier": "release-validator/0.6"},
-    "javascript_syntax": {"status": "PASS", "runtime": "node --check", "verifier": "release-validator/0.6"},
-    "license_classification": {"status": "PASS", "mapping": "REUSE.toml fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0", "verifier": "release-validator/0.6"},
-    "render_replay": {"status": "UNAVAILABLE", "viewer_build": "material-evidence-card/v0.0.7-p0", "camera_preset": "INITIAL_ISOMETRIC", "representation": "BALL_AND_STICK", "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY", "reason": "Managed browser replay environment unavailable; no replay PASS is claimed."}
+    "manifest_ui_identity": {"status": "PASS", "verifier": "release-validator/0.11"},
+    "javascript_syntax": {"status": "PASS", "runtime": "node --check", "verifier": "release-validator/0.11"},
+    "license_classification": {"status": "PASS", "mapping": "REUSE.toml runtime/tooling -> MIT; fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0", "verifier": "release-validator/0.11"},
+    "render_replay": {
+      "status": "NOT_RUN",
+      "viewer_build": "material-evidence-card/v0.0.7-p0+replay.1",
+      "camera_preset": "INITIAL_ISOMETRIC",
+      "representation": "BALL_AND_STICK",
+      "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY",
+      "runner": "mec-render-replay/1.0.0",
+      "workflow": ".github/workflows/material-evidence-card-replay.yml",
+      "reason": "The patched viewer has not yet received an authoritative CI browser observation; no replay PASS is claimed.",
+      "prior_release_observation": {
+        "release": "v0.0.7-p0",
+        "status": "UNAVAILABLE",
+        "superseded": false
+      }
+    }
   },
   "publication_gate": {
     "sequential_fixture_id": "PASS",

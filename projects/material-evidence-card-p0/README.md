@@ -7,7 +7,7 @@ This project follows [`MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md`](MATERIAL_EVIDENCE_C
 ## Release status
 
 ```text
-RELEASE: v0.0.7-p0
+RELEASE: v0.0.7-p0+replay.1
 PURPOSE: PERSONAL_PORTFOLIO_DEMO
 SPECIFICATION: MATERIAL_EVIDENCE_CARD_SPEC_v1.0
 ACTIVE_FIXTURE: SYN-HEA-006
@@ -101,11 +101,34 @@ The active manifest records:
 - Manifest/UI identity: `PASS`
 - JavaScript syntax: `PASS`
 - License classification: `PASS`
-- Browser render replay: `UNAVAILABLE`
+- Browser render replay for patched viewer: `NOT_RUN`
 
 A checkmark in the UI represents only `PASS`. `false` is not used as a substitute for not run, failed, or unavailable.
 
-The render replay contract means the same input, viewer build, recorded initial camera, and representation can recreate the semantic view. It does **not** promise cross-browser or cross-GPU pixel identity. This release does not claim a replay `PASS` because a managed browser replay environment was unavailable.
+The render replay contract means the same input, viewer build, recorded initial camera, and representation can recreate the semantic view. It does **not** promise cross-browser or cross-GPU pixel identity. The original `v0.0.7-p0` release recorded `UNAVAILABLE`; that historical observation is not rewritten. The patched `v0.0.7-p0+replay.1` viewer is `NOT_RUN` until its GitHub Actions receipt records a browser observation.
+
+## Deterministic render replay
+
+Open `index.html?replay=1` to activate the native replay contract. In this mode the viewer fixes the initial camera and ball-and-stick representation, disables rotation and controls, waits for a stable canvas layout, renders once, and publishes a read-only `window.__MEC_REPLAY__` observation API. The page may report only `READY` or `ERROR`; it cannot award itself `PASS`.
+
+The external runner:
+
+1. verifies manifest, XYZ, SHA-256 sidecar, embedded atom order, and the fixed display translation;
+2. replays `SYN-HEA-004`, `005`, and `006` from their exact release commits;
+3. runs two fresh browser contexts per target;
+4. validates the page receipt shape and finite projected coordinates, samples every projected atom center on the canvas, and rejects camera, representation, or semantic-digest drift;
+5. binds every result—including `NOT_RUN` and `UNAVAILABLE`—to the requested commit and exact manifest/index/styles/viewer/XYZ hashes;
+6. writes a JSON receipt, SHA-256 sidecar, and diagnostic canvas screenshots.
+
+The retrospective observations do not supersede the historical manifests. Run locally with:
+
+```sh
+npm ci
+npx playwright install --with-deps chromium
+npm run check
+```
+
+GitHub Actions uses the same pinned dependency and uploads the replay evidence as a workflow artifact. Browser launch capability failures remain `UNAVAILABLE`; browser-started timeouts or semantic mismatches are `FAIL`. Runner infrastructure errors are recorded separately, leave the four-state render check at `NOT_RUN`, and block the job.
 
 ## Recurring showcase contract
 

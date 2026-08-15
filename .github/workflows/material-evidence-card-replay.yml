@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: 2026 HORNG
+# SPDX-License-Identifier: MIT
+
+name: Material Evidence Card render replay
+
+on:
+  pull_request:
+    paths:
+      - "projects/material-evidence-card-p0/**"
+      - ".github/workflows/material-evidence-card-replay.yml"
+  push:
+    branches: [main]
+    paths:
+      - "projects/material-evidence-card-p0/**"
+      - ".github/workflows/material-evidence-card-replay.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: projects/material-evidence-card-p0
+    steps:
+      - name: Check out full fixture history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install pinned development dependency
+        run: npm ci
+
+      - name: Run deterministic preflight and policy tests
+        run: |
+          npm run validate
+          npm test
+
+      - name: Install pinned Chromium and OS dependencies
+        id: browser-install
+        continue-on-error: true
+        run: npx playwright install --with-deps chromium
+
+      - name: Replay exact historical targets and active manifest fixture
+        env:
+          MEC_REPLAY_BROWSER_INSTALL_FAILED: ${{ steps.browser-install.outcome == 'success' && '0' || '1' }}
+          MEC_REPLAY_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run replay:ci
+
+      - name: Upload replay receipts and diagnostic screenshots
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: material-evidence-card-render-replay-${{ github.run_id }}-${{ github.run_attempt }}
+          path: projects/material-evidence-card-p0/replay-artifacts/
+          if-no-files-found: warn
+          retention-days: 30
