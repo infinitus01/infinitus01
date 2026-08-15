@@ -260,7 +260,9 @@ test("UI replay status mutation fails manifest identity", async () => {
   const viewerText = await readFile(path.join(projectDir, "viewer.js"), "utf8");
   const xyzBytes = await readFile(path.join(projectDir, manifest.structure_file));
   const sidecarText = await readFile(path.join(projectDir, `${manifest.structure_file}.sha256`), "utf8");
-  const mutatedIndex = indexText.replace("RENDER REPLAY: NOT_RUN", "RENDER REPLAY: PASS");
+  const currentStatus = manifest.artifact_checks.render_replay.status;
+  const mutatedStatus = currentStatus === REPLAY_STATUS.FAIL ? REPLAY_STATUS.PASS : REPLAY_STATUS.FAIL;
+  const mutatedIndex = indexText.replace(`RENDER REPLAY: ${currentStatus}`, `RENDER REPLAY: ${mutatedStatus}`);
   const result = verifyReleaseIdentity({ manifest, indexText: mutatedIndex, viewerText, xyzBytes, sidecarText });
   assert.equal(result.status, REPLAY_STATUS.FAIL);
   assert.equal(result.checks.find(item => item.name === "INDEX_RENDER_REPLAY_STATUS")?.status, REPLAY_STATUS.FAIL);
@@ -268,15 +270,41 @@ test("UI replay status mutation fails manifest identity", async () => {
 
 test("render replay status is restricted to the frozen four-state enum", async () => {
   const manifest = JSON.parse(await readFile(path.join(projectDir, "manifest.json"), "utf8"));
+  const currentStatus = manifest.artifact_checks.render_replay.status;
   manifest.artifact_checks.render_replay.status = "TYPO";
   const indexText = (await readFile(path.join(projectDir, "index.html"), "utf8"))
-    .replace("RENDER REPLAY: NOT_RUN", "RENDER REPLAY: TYPO");
+    .replace(`RENDER REPLAY: ${currentStatus}`, "RENDER REPLAY: TYPO");
   const viewerText = await readFile(path.join(projectDir, "viewer.js"), "utf8");
   const xyzBytes = await readFile(path.join(projectDir, manifest.structure_file));
   const sidecarText = await readFile(path.join(projectDir, `${manifest.structure_file}.sha256`), "utf8");
   const result = verifyReleaseIdentity({ manifest, indexText, viewerText, xyzBytes, sidecarText });
   assert.equal(result.status, REPLAY_STATUS.FAIL);
   assert.equal(result.checks.find(item => item.name === "RENDER_REPLAY_STATUS_ENUM")?.status, REPLAY_STATUS.FAIL);
+});
+
+test("declared PASS is pinned to a structured hash-bound evidence receipt", async () => {
+  const manifest = JSON.parse(await readFile(path.join(projectDir, "manifest.json"), "utf8"));
+  const evidence = manifest.artifact_checks.render_replay.evidence_receipt;
+  assert.equal(evidence.observed_status, REPLAY_STATUS.PASS);
+  assert.match(evidence.github_run_id, /^\d+$/);
+  assert.ok(Number.isInteger(evidence.github_run_attempt) && evidence.github_run_attempt > 0);
+  assert.match(evidence.candidate_head_sha, /^[a-f0-9]{40}$/);
+  assert.equal(evidence.exact_commit_rerun_required, true);
+  for (const field of ["artifact_archive_sha256", "receipt_sha256", "canonical_payload_sha256"]) {
+    assert.match(evidence[field], /^[a-f0-9]{64}$/);
+  }
+
+  const mutatedManifest = structuredClone(manifest);
+  mutatedManifest.artifact_checks.render_replay.evidence_receipt.receipt_sha256 = "0".repeat(63);
+  const result = verifyReleaseIdentity({
+    manifest: mutatedManifest,
+    indexText: await readFile(path.join(projectDir, "index.html"), "utf8"),
+    viewerText: await readFile(path.join(projectDir, "viewer.js"), "utf8"),
+    xyzBytes: await readFile(path.join(projectDir, manifest.structure_file)),
+    sidecarText: await readFile(path.join(projectDir, `${manifest.structure_file}.sha256`), "utf8")
+  });
+  assert.equal(result.status, REPLAY_STATUS.FAIL);
+  assert.equal(result.checks.find(item => item.name === "RENDER_REPLAY_PASS_EVIDENCE")?.status, REPLAY_STATUS.FAIL);
 });
 
 test("frozen fixture preservation rejects simultaneous XYZ and sidecar replacement", () => {
@@ -324,12 +352,12 @@ test("manifest keeps render replay outside the frozen publication gate", async (
   const manifest = JSON.parse(await readFile(path.join(projectDir, "manifest.json"), "utf8"));
   const indexText = await readFile(path.join(projectDir, "index.html"), "utf8");
   assert.equal(manifest.publication_gate.render_replay, undefined);
-  assert.equal(manifest.artifact_checks.render_replay.status, REPLAY_STATUS.NOT_RUN);
+  assert.equal(manifest.artifact_checks.render_replay.status, REPLAY_STATUS.PASS);
   assert.ok(indexText.includes("Fixed translation + render only"));
   assert.ok(!indexText.includes("Center + render only"));
 });
 
-test("runner binds subjects for unavailable/not-run and separates runner infra", async () => {
+test("declared PASS blocks unavailable/not-run while preserving four-state receipts", async () => {
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "mec-negative-controls-"));
   const runner = path.join(projectDir, "tools", "render-replay.mjs");
   const receiptAt = directory => path.join(directory, "render-replay-receipt.json");
@@ -342,9 +370,11 @@ test("runner binds subjects for unavailable/not-run and separates runner infra",
   try {
     const unavailableDir = path.join(tempDir, "unavailable");
     const unavailable = spawnSync(process.execPath, [runner, "--force-unavailable", "--output-dir", unavailableDir], { encoding: "utf8" });
-    assert.equal(unavailable.status, 3, unavailable.stderr || unavailable.stdout);
+    assert.equal(unavailable.status, 1, unavailable.stderr || unavailable.stdout);
     const unavailableReceipt = JSON.parse(await readFile(receiptAt(unavailableDir), "utf8"));
     assert.equal(unavailableReceipt.render_replay.status, REPLAY_STATUS.UNAVAILABLE);
+    assert.equal(unavailableReceipt.declared_status_gate.blocked, true);
+    assert.equal(unavailableReceipt.publication_effect, "BLOCK");
     assert.equal(unavailableReceipt.environment.browser_launch_attempted, false);
     assertBoundTargets(unavailableReceipt);
 
@@ -354,17 +384,21 @@ test("runner binds subjects for unavailable/not-run and separates runner infra",
       [runner, "--policy=frozen-v1", "--output-dir", installFailureDir],
       { encoding: "utf8", env: { ...process.env, MEC_REPLAY_BROWSER_INSTALL_FAILED: "1" } }
     );
-    assert.equal(installFailure.status, 0, installFailure.stderr || installFailure.stdout);
+    assert.equal(installFailure.status, 1, installFailure.stderr || installFailure.stdout);
     const installFailureReceipt = JSON.parse(await readFile(receiptAt(installFailureDir), "utf8"));
     assert.equal(installFailureReceipt.render_replay.classification_code, "BROWSER_INSTALL_FAILED");
     assert.equal(installFailureReceipt.environment.browser_launch_attempted, false);
+    assert.equal(installFailureReceipt.declared_status_gate.blocked, true);
+    assert.equal(installFailureReceipt.publication_effect, "BLOCK");
     assertBoundTargets(installFailureReceipt);
 
     const notRunDir = path.join(tempDir, "not-run");
     const notRun = spawnSync(process.execPath, [runner, "--skip", "--output-dir", notRunDir], { encoding: "utf8" });
-    assert.equal(notRun.status, 4, notRun.stderr || notRun.stdout);
+    assert.equal(notRun.status, 1, notRun.stderr || notRun.stdout);
     const notRunReceipt = JSON.parse(await readFile(receiptAt(notRunDir), "utf8"));
     assert.equal(notRunReceipt.render_replay.status, REPLAY_STATUS.NOT_RUN);
+    assert.equal(notRunReceipt.declared_status_gate.blocked, true);
+    assert.equal(notRunReceipt.publication_effect, "BLOCK");
     assertBoundTargets(notRunReceipt);
 
     const infraDir = path.join(tempDir, "infra");

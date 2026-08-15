@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   PUBLICATION_EFFECT,
+  REPLAY_RUNNER_VERSION,
   REPLAY_STATUS,
   RUNNER_STATUS,
   aggregateStatuses,
@@ -23,7 +24,7 @@ import {
   verifyReleaseIdentity
 } from "./replay-core.mjs";
 
-const RUNNER_VERSION = "mec-render-replay/1.0.2";
+const RUNNER_VERSION = REPLAY_RUNNER_VERSION;
 const VIEWPORT = Object.freeze({ width: 1440, height: 1100 });
 const DEVICE_SCALE_FACTOR = 1;
 const READY_TIMEOUT_MS = 8_000;
@@ -189,7 +190,8 @@ async function loadSubject(targetDir, target) {
     indexText: indexBytes.toString("utf8"),
     viewerText: viewerBytes.toString("utf8"),
     xyzBytes,
-    sidecarText: sidecarBytes.toString("utf8")
+    sidecarText: sidecarBytes.toString("utf8"),
+    expectedRunner: target.adapter === "NATIVE_REPLAY_V1" ? RUNNER_VERSION : null
   });
 
   return {

@@ -101,11 +101,11 @@ The active manifest records:
 - Manifest/UI identity: `PASS`
 - JavaScript syntax: `PASS`
 - License classification: `PASS`
-- Browser render replay for patched viewer: `NOT_RUN`
+- Browser render replay for patched viewer: `PASS`
 
 A checkmark in the UI represents only `PASS`. `false` is not used as a substitute for not run, failed, or unavailable.
 
-The render replay contract means the same input, viewer build, recorded initial camera, and representation can recreate the semantic view. It does **not** promise cross-browser or cross-GPU pixel identity. The original `v0.0.7-p0` release recorded `UNAVAILABLE`; that historical observation is not rewritten. The patched `v0.0.7-p0+replay.2` viewer is `NOT_RUN` until its GitHub Actions receipt records a browser observation.
+The render replay contract means the same input, viewer build, recorded initial camera, and representation can recreate the semantic view. It does **not** promise cross-browser or cross-GPU pixel identity. The original `v0.0.7-p0` release recorded `UNAVAILABLE`; that historical observation is not rewritten. The patched `v0.0.7-p0+replay.2` viewer is `PASS` after a SHA-256-bound GitHub Actions browser receipt replayed all four targets twice with matching semantic digests. The declared-PASS gate requires the exact source commit to reproduce that result before publication.
 
 ## Deterministic render replay
 

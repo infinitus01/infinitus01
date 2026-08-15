@@ -3,6 +3,7 @@ import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  REPLAY_RUNNER_VERSION,
   REPLAY_STATUS,
   parseSidecar,
   parseXyz,
@@ -104,7 +105,8 @@ const activeIdentity = verifyReleaseIdentity({
   indexText: await loadText("index.html"),
   viewerText: await loadText("viewer.js"),
   xyzBytes: activeXyz,
-  sidecarText: activeSidecar
+  sidecarText: activeSidecar,
+  expectedRunner: REPLAY_RUNNER_VERSION
 });
 checks.push({ name: "ACTIVE_RELEASE_IDENTITY", status: activeIdentity.status, detail: activeIdentity.classification_code });
 const activeIndexText = await loadText("index.html");
@@ -144,5 +146,5 @@ try {
 }
 
 const status = checks.some(item => item.status === REPLAY_STATUS.FAIL) ? REPLAY_STATUS.FAIL : REPLAY_STATUS.PASS;
-process.stdout.write(`${JSON.stringify({ validator: "release-validator/0.12", status, checks }, null, 2)}\n`);
+process.stdout.write(`${JSON.stringify({ validator: "release-validator/0.13", status, checks }, null, 2)}\n`);
 if (status !== REPLAY_STATUS.PASS) process.exitCode = 1;

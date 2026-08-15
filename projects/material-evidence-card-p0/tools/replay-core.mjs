@@ -12,6 +12,8 @@ export const RUNNER_STATUS = Object.freeze({
   INFRA_ERROR: "INFRA_ERROR"
 });
 
+export const REPLAY_RUNNER_VERSION = "mec-render-replay/1.0.3";
+
 export const PUBLICATION_EFFECT = Object.freeze({
   NOT_RUN: "ALLOW_WITH_DISCLOSED_LIMIT",
   PASS: "ALLOW",
@@ -192,7 +194,7 @@ function check(name, passed, detail) {
   return { name, status: passed ? REPLAY_STATUS.PASS : REPLAY_STATUS.FAIL, detail };
 }
 
-export function verifyReleaseIdentity({ manifest, indexText, viewerText, xyzBytes, sidecarText }) {
+export function verifyReleaseIdentity({ manifest, indexText, viewerText, xyzBytes, sidecarText, expectedRunner = null }) {
   const checks = [];
   let parsed;
   let sidecar;
@@ -251,6 +253,37 @@ export function verifyReleaseIdentity({ manifest, indexText, viewerText, xyzByte
   checks.push(check("RENDER_REPLAY_STATUS_ENUM", allowedRenderStatuses.includes(renderStatus), {
     status: renderStatus,
     allowed: allowedRenderStatuses
+  }));
+  if (expectedRunner) {
+    checks.push(check("RENDER_REPLAY_RUNNER_VERSION", manifest.artifact_checks?.render_replay?.runner === expectedRunner, {
+      declared: manifest.artifact_checks?.render_replay?.runner || null,
+      expected: expectedRunner
+    }));
+  }
+  const evidenceReceipt = manifest.artifact_checks?.render_replay?.evidence_receipt;
+  const sha256Pattern = /^[a-f0-9]{64}$/;
+  const commitPattern = /^[a-f0-9]{40}$/;
+  const passEvidenceValid = renderStatus !== REPLAY_STATUS.PASS || (
+    isRecord(evidenceReceipt)
+    && evidenceReceipt.receipt_schema === "MEC_RENDER_REPLAY_RECEIPT_V1"
+    && evidenceReceipt.observed_status === REPLAY_STATUS.PASS
+    && /^mec-render-replay\/\d+\.\d+\.\d+$/.test(evidenceReceipt.runner)
+    && /^\d+$/.test(evidenceReceipt.github_run_id)
+    && Number.isInteger(evidenceReceipt.github_run_attempt)
+    && evidenceReceipt.github_run_attempt > 0
+    && commitPattern.test(evidenceReceipt.checkout_commit_sha)
+    && commitPattern.test(evidenceReceipt.candidate_head_sha)
+    && /^\d+$/.test(evidenceReceipt.artifact_id)
+    && typeof evidenceReceipt.artifact_name === "string"
+    && evidenceReceipt.artifact_name.length > 0
+    && evidenceReceipt.exact_commit_rerun_required === true
+    && sha256Pattern.test(evidenceReceipt.artifact_archive_sha256)
+    && sha256Pattern.test(evidenceReceipt.receipt_sha256)
+    && sha256Pattern.test(evidenceReceipt.canonical_payload_sha256)
+  );
+  checks.push(check("RENDER_REPLAY_PASS_EVIDENCE", passEvidenceValid, {
+    required: renderStatus === REPLAY_STATUS.PASS,
+    evidence_receipt: evidenceReceipt || null
   }));
   const indexRenderStatusMatches = typeof renderStatus === "string"
     && (indexText.includes(`RENDER REPLAY: ${renderStatus}`)
