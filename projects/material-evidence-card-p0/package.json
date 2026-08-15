@@ -1,0 +1,17 @@
+{
+  "name": "material-evidence-card-render-replay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic browser replay harness for the Material Evidence Card P0 portfolio fixture.",
+  "scripts": {
+    "validate": "node tools/validate-release.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "replay": "node tools/render-replay.mjs",
+    "replay:ci": "node tools/render-replay.mjs --policy=frozen-v1",
+    "check": "npm run validate && npm test && npm run replay"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
