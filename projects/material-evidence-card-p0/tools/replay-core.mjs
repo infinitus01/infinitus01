@@ -243,6 +243,15 @@ export function verifyReleaseIdentity({ manifest, indexText, viewerText, xyzByte
   checks.push(check("INDEX_FIXTURE_ID", indexText.includes(manifest.fixture_id), { fixture_id: manifest.fixture_id }));
   checks.push(check("INDEX_STRUCTURE_SHA256", indexText.includes(manifest.structure_sha256), { sha256: manifest.structure_sha256 }));
   const renderStatus = manifest.artifact_checks?.render_replay?.status;
+  const allowedRenderStatuses = Object.values(REPLAY_STATUS);
+  checks.push(check("ARTIFACT_STATUS_ENUM", canonicalJson(manifest.artifact_check_status_enum) === canonicalJson(allowedRenderStatuses), {
+    declared: manifest.artifact_check_status_enum,
+    required: allowedRenderStatuses
+  }));
+  checks.push(check("RENDER_REPLAY_STATUS_ENUM", allowedRenderStatuses.includes(renderStatus), {
+    status: renderStatus,
+    allowed: allowedRenderStatuses
+  }));
   const indexRenderStatusMatches = typeof renderStatus === "string"
     && (indexText.includes(`RENDER REPLAY: ${renderStatus}`)
       || indexText.includes(`render replay 為 ${renderStatus}`));
@@ -329,7 +338,7 @@ export function validatePostReadyLayout(baseline, observed, guard) {
   }
   const numericFields = ["css_width", "css_height", "pixel_width", "pixel_height", "dpr"];
   if (numericFields.some(field => !isFiniteNumber(baseline[field]))) errors.push("POST_READY_LAYOUT_BASELINE_INVALID");
-  if (["css_width", "css_height", "pixel_width", "pixel_height", "replay_dpr", "expected_pixel_width", "expected_pixel_height"]
+  if (["css_width", "css_height", "pixel_width", "pixel_height", "replay_dpr_x", "replay_dpr_y", "device_pixel_ratio", "expected_pixel_width", "expected_pixel_height"]
     .some(field => !isFiniteNumber(observed[field]))) errors.push("POST_READY_LAYOUT_OBSERVATION_INVALID");
   if (!isFiniteNumber(guard.max_css_drift_device_px) || guard.max_css_drift_device_px < 0) {
     errors.push("POST_READY_LAYOUT_TOLERANCE_INVALID");
@@ -345,7 +354,10 @@ export function validatePostReadyLayout(baseline, observed, guard) {
   if (observed.expected_pixel_width !== baseline.pixel_width || observed.expected_pixel_height !== baseline.pixel_height) {
     errors.push("POST_READY_EXPECTED_BACKING_CHANGED");
   }
-  if (guard.dpr_must_match === true && observed.replay_dpr !== baseline.dpr) errors.push("POST_READY_DPR_CHANGED");
+  if (guard.dpr_must_match === true
+    && (observed.replay_dpr_x !== baseline.dpr || observed.replay_dpr_y !== baseline.dpr)) {
+    errors.push("POST_READY_DPR_CHANGED");
+  }
   if (cssWidthDrift > guard.max_css_drift_device_px || cssHeightDrift > guard.max_css_drift_device_px) {
     errors.push("POST_READY_CSS_DRIFT_EXCEEDED");
   }
@@ -354,6 +366,17 @@ export function validatePostReadyLayout(baseline, observed, guard) {
     errors,
     css_drift_device_px: { width: cssWidthDrift, height: cssHeightDrift }
   };
+}
+
+export function summarizeReplayAttempts(attempts, semanticDigestEqual) {
+  const failedAttempt = attempts.find(attempt => attempt.status !== REPLAY_STATUS.PASS);
+  if (failedAttempt) {
+    return { status: failedAttempt.status, classification_code: failedAttempt.classification_code };
+  }
+  if (!semanticDigestEqual) {
+    return { status: REPLAY_STATUS.FAIL, classification_code: "SEMANTIC_DIGEST_MISMATCH" };
+  }
+  return { status: REPLAY_STATUS.PASS, classification_code: "REPLAY_VERIFIED" };
 }
 
 export function validateRuntimeReceipt(runtime, expectedAtoms, { nativeMode = false } = {}) {

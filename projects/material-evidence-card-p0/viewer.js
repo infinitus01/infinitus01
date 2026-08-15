@@ -1,5 +1,5 @@
 const REPLAY_MODE=new URLSearchParams(location.search).get('replay')==='1';
-const VIEWER_BUILD='material-evidence-card/v0.0.7-p0+replay.1';
+const VIEWER_BUILD='material-evidence-card/v0.0.7-p0+replay.2';
 const REPLAY_CONTRACT='SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY';
 const INITIAL_VIEW=Object.freeze({preset:'INITIAL_ISOMETRIC',rx:-.52,ry:.67,zoom:1,mode:0,representation:'BALL_AND_STICK'});
 const BOND_CUTOFF=2.62;

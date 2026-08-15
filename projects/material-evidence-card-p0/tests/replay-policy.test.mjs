@@ -16,6 +16,7 @@ import {
   parseBondCutoff,
   parseEmbeddedAtoms,
   semanticDigest,
+  summarizeReplayAttempts,
   validateFixtureGrowth,
   validatePostReadyLayout,
   validateRuntimeReceipt,
@@ -169,7 +170,9 @@ test("post-READY layout policy gates tolerance, rounding boundaries, and backing
     css_height: 80,
     pixel_width: 100,
     pixel_height: 80,
-    replay_dpr: 1,
+    replay_dpr_x: 1,
+    replay_dpr_y: 1,
+    device_pixel_ratio: 1,
     expected_pixel_width: 100,
     expected_pixel_height: 80
   };
@@ -191,6 +194,33 @@ test("post-READY layout policy gates tolerance, rounding boundaries, and backing
 
   const backingTamper = { ...stable, pixel_width: 101 };
   assert.ok(validatePostReadyLayout(baseline, backingTamper, guard).errors.includes("POST_READY_BACKING_STORE_CHANGED"));
+
+  const dprTamper = { ...stable, replay_dpr_x: 2 };
+  assert.ok(validatePostReadyLayout(baseline, dprTamper, guard).errors.includes("POST_READY_DPR_CHANGED"));
+});
+
+test("target summary preserves the exact failed attempt classification", () => {
+  assert.deepEqual(summarizeReplayAttempts([
+    { status: REPLAY_STATUS.FAIL, classification_code: "POST_OBSERVATION_STATE_INVALIDATED" },
+    { status: REPLAY_STATUS.FAIL, classification_code: "POST_OBSERVATION_STATE_INVALIDATED" }
+  ], true), {
+    status: REPLAY_STATUS.FAIL,
+    classification_code: "POST_OBSERVATION_STATE_INVALIDATED"
+  });
+  assert.equal(summarizeReplayAttempts([
+    { status: REPLAY_STATUS.PASS, classification_code: "REPLAY_VERIFIED" },
+    { status: REPLAY_STATUS.PASS, classification_code: "REPLAY_VERIFIED" }
+  ], false).classification_code, "SEMANTIC_DIGEST_MISMATCH");
+  assert.equal(summarizeReplayAttempts([
+    { status: REPLAY_STATUS.FAIL, classification_code: "READY_TIMEOUT" },
+    { status: REPLAY_STATUS.PASS, classification_code: "REPLAY_VERIFIED" }
+  ], false).classification_code, "READY_TIMEOUT");
+});
+
+test("diagnostic PNG export does not scroll or resize the observed canvas", async () => {
+  const runnerText = await readFile(path.join(projectDir, "tools", "render-replay.mjs"), "utf8");
+  assert.match(runnerText, /canvasElement\.toDataURL\("image\/png"\)/);
+  assert.doesNotMatch(runnerText, /locator\("#stage"\)\.screenshot/);
 });
 
 test("historical bond cutoffs are parsed from each exact viewer build", () => {
@@ -234,6 +264,19 @@ test("UI replay status mutation fails manifest identity", async () => {
   const result = verifyReleaseIdentity({ manifest, indexText: mutatedIndex, viewerText, xyzBytes, sidecarText });
   assert.equal(result.status, REPLAY_STATUS.FAIL);
   assert.equal(result.checks.find(item => item.name === "INDEX_RENDER_REPLAY_STATUS")?.status, REPLAY_STATUS.FAIL);
+});
+
+test("render replay status is restricted to the frozen four-state enum", async () => {
+  const manifest = JSON.parse(await readFile(path.join(projectDir, "manifest.json"), "utf8"));
+  manifest.artifact_checks.render_replay.status = "TYPO";
+  const indexText = (await readFile(path.join(projectDir, "index.html"), "utf8"))
+    .replace("RENDER REPLAY: NOT_RUN", "RENDER REPLAY: TYPO");
+  const viewerText = await readFile(path.join(projectDir, "viewer.js"), "utf8");
+  const xyzBytes = await readFile(path.join(projectDir, manifest.structure_file));
+  const sidecarText = await readFile(path.join(projectDir, `${manifest.structure_file}.sha256`), "utf8");
+  const result = verifyReleaseIdentity({ manifest, indexText, viewerText, xyzBytes, sidecarText });
+  assert.equal(result.status, REPLAY_STATUS.FAIL);
+  assert.equal(result.checks.find(item => item.name === "RENDER_REPLAY_STATUS_ENUM")?.status, REPLAY_STATUS.FAIL);
 });
 
 test("frozen fixture preservation rejects simultaneous XYZ and sidecar replacement", () => {

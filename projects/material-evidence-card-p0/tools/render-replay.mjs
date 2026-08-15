@@ -17,12 +17,13 @@ import {
   countElements,
   semanticDigest,
   sha256,
+  summarizeReplayAttempts,
   validatePostReadyLayout,
   validateRuntimeReceipt,
   verifyReleaseIdentity
 } from "./replay-core.mjs";
 
-const RUNNER_VERSION = "mec-render-replay/1.0.1";
+const RUNNER_VERSION = "mec-render-replay/1.0.2";
 const VIEWPORT = Object.freeze({ width: 1440, height: 1100 });
 const DEVICE_SCALE_FACTOR = 1;
 const READY_TIMEOUT_MS = 8_000;
@@ -414,17 +415,27 @@ async function runAttempt(browser, targetDir, target, subjectData, attemptNumber
   let screenshotSha256 = null;
   try {
     const screenshotPath = path.join(outputDir, `${target.fixture_id}-${target.adapter}-attempt-${attemptNumber}.png`);
-    const screenshotBytes = await page.locator("#stage").screenshot({ path: screenshotPath });
+    const screenshotBase64 = await page.evaluate(() => {
+      const canvasElement = document.getElementById("stage");
+      if (!(canvasElement instanceof HTMLCanvasElement)) throw new Error("CANVAS_SCREENSHOT_SOURCE_MISSING");
+      return canvasElement.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
+    });
+    const screenshotBytes = Buffer.from(screenshotBase64, "base64");
+    if (!screenshotBytes.length) throw new Error("CANVAS_SCREENSHOT_EMPTY");
+    await writeFile(screenshotPath, screenshotBytes);
     screenshotSha256 = sha256(screenshotBytes);
   } catch (error) {
     diagnosticErrors.push(`SCREENSHOT_FAILED:${error instanceof Error ? error.message : String(error)}`);
   }
 
   if (nativeMode && runtime) {
-    postObservation = await page.evaluate(baselineDpr => {
+    postObservation = await page.evaluate(() => {
       const spinButton = document.getElementById("spinBtn");
       const canvasElement = document.getElementById("stage");
       const rect = canvasElement?.getBoundingClientRect();
+      const transform = canvasElement?.getContext("2d")?.getTransform();
+      const replayDprX = transform?.a;
+      const replayDprY = transform?.d;
       return {
         status: globalThis.__MEC_REPLAY__?.status || null,
         receipt: globalThis.__MEC_REPLAY__?.getReceipt?.() || null,
@@ -434,9 +445,11 @@ async function runAttempt(browser, targetDir, target, subjectData, attemptNumber
           css_height: rect.height,
           pixel_width: canvasElement.width,
           pixel_height: canvasElement.height,
-          replay_dpr: baselineDpr,
-          expected_pixel_width: Math.round(rect.width * baselineDpr),
-          expected_pixel_height: Math.round(rect.height * baselineDpr),
+          replay_dpr_x: replayDprX,
+          replay_dpr_y: replayDprY,
+          device_pixel_ratio: globalThis.devicePixelRatio || 1,
+          expected_pixel_width: Math.round(rect.width * replayDprX),
+          expected_pixel_height: Math.round(rect.height * replayDprY),
           viewport_width: globalThis.innerWidth,
           viewport_height: globalThis.innerHeight,
           scroll_x: globalThis.scrollX,
@@ -448,7 +461,7 @@ async function runAttempt(browser, targetDir, target, subjectData, attemptNumber
           spin_button_text: spinButton?.textContent || null
         }
       };
-    }, runtime.canvas_observation.dpr).catch(error => ({ status: "EVALUATION_ERROR", receipt: null, ui: null, error: String(error) }));
+    }).catch(error => ({ status: "EVALUATION_ERROR", receipt: null, ui: null, error: String(error) }));
     if (postObservation.status !== "READY" || canonicalJson(postObservation.receipt) !== canonicalJson(runtime)) {
       postObservationInvalidated = true;
       errors.page.push(`NATIVE_REPLAY_STATE_INVALIDATED_AFTER_OBSERVATION:${postObservation.error?.code || postObservation.status || "UNKNOWN"}`);
@@ -561,11 +574,7 @@ async function runTarget(browser, targetDir, target, outputDir, subjectData = nu
   }
   const digestEqual = attempts.every(attempt => attempt.semantic_digest)
     && attempts.every(attempt => attempt.semantic_digest === attempts[0].semantic_digest);
-  const comparisonClassification = classifyReplayObservation({
-    browser_launched: true,
-    semantic_digest_match: digestEqual,
-    page_errors: attempts.flatMap(attempt => attempt.status === REPLAY_STATUS.PASS ? [] : [attempt.classification_code])
-  });
+  const comparisonClassification = summarizeReplayAttempts(attempts, digestEqual);
   const status = comparisonClassification.status;
 
   return {
@@ -596,6 +605,8 @@ async function baseReceipt(environment = {}) {
   const runnerFiles = {
     render_replay: path.join(projectDir, "tools", "render-replay.mjs"),
     replay_core: path.join(projectDir, "tools", "replay-core.mjs"),
+    release_validator: path.join(projectDir, "tools", "validate-release.mjs"),
+    policy_tests: path.join(projectDir, "tests", "replay-policy.test.mjs"),
     package: path.join(projectDir, "package.json"),
     package_lock: path.join(projectDir, "package-lock.json"),
     workflow: path.join(repoRoot, ".github", "workflows", "material-evidence-card-replay.yml")

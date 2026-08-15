@@ -1,4 +1,4 @@
-# Known limitations — v0.0.7-p0+replay.1
+# Known limitations — v0.0.7-p0+replay.2
 
 - The viewer uses embedded Cartesian coordinates; it does not parse the XYZ file at runtime.
 - The transparent frame is a display bound, not a crystallographic unit cell.

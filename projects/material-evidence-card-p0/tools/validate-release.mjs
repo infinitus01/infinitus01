@@ -144,5 +144,5 @@ try {
 }
 
 const status = checks.some(item => item.status === REPLAY_STATUS.FAIL) ? REPLAY_STATUS.FAIL : REPLAY_STATUS.PASS;
-process.stdout.write(`${JSON.stringify({ validator: "release-validator/0.11", status, checks }, null, 2)}\n`);
+process.stdout.write(`${JSON.stringify({ validator: "release-validator/0.12", status, checks }, null, 2)}\n`);
 if (status !== REPLAY_STATUS.PASS) process.exitCode = 1;
