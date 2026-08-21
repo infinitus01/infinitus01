@@ -5,9 +5,9 @@
     "version": "1.0",
     "path": "MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md"
   },
-  "release": "v0.0.9-p0",
+  "release": "v0.0.10-p0",
   "purpose": "PERSONAL_PORTFOLIO_DEMO",
-  "fixture_id": "SYN-HEA-008",
+  "fixture_id": "SYN-HEA-009",
   "recipe_class": "SYNTHETIC_FIXTURE",
   "fixture_type": "SYNTHETIC_VISUALIZATION_FIXTURE",
   "source_provenance": {
@@ -16,26 +16,26 @@
     "source_reference": null,
     "reuse_license": "CC0-1.0"
   },
-  "structure_file": "fixture/SYN-HEA-008.xyz",
-  "structure_sha256": "d0d813aefbeafb52578e500a282cee13e7ef939d967d26f128b785c7ba0e52c5",
+  "structure_file": "fixture/SYN-HEA-009.xyz",
+  "structure_sha256": "ff88e00d0c97b02205e7a2bef22f6391c9d287fbb713b60976fe81a055c97255",
   "atom_count": 16,
   "nominal_atomic_composition": {
     "basis": "ATOMIC_PERCENT",
     "derivation": "DISPLAY_ATOM_COUNT",
-    "display_notation": "Fe50Ni12.5Cr37.5 (at.%)",
+    "display_notation": "Fe25Ni62.5Cr12.5 (at.%)",
     "display_notation_authority": "NON_AUTHORITATIVE",
     "total_atomic_percent": 100.0,
     "tolerance": 1e-09,
     "components": {
-      "Fe": {"display_atom_count": 8, "atomic_percent": 50.0},
-      "Ni": {"display_atom_count": 2, "atomic_percent": 12.5},
-      "Cr": {"display_atom_count": 6, "atomic_percent": 37.5}
+      "Fe": {"display_atom_count": 4, "atomic_percent": 25.0},
+      "Ni": {"display_atom_count": 10, "atomic_percent": 62.5},
+      "Cr": {"display_atom_count": 2, "atomic_percent": 12.5}
     }
   },
   "coordinate_basis": "CARTESIAN_ONLY",
   "crystallographic_semantics": "NONE",
   "display_arrangement": "BCC-like visual arrangement only",
-  "display_spacing_angstrom": 2.96,
+  "display_spacing_angstrom": 3.0,
   "display_bounds_role": "VISUAL_AID_ONLY",
   "display_bounds_is_unit_cell": false,
   "scientific_hypothesis_status": "NONE",
@@ -44,13 +44,14 @@
   "decision_usable": false,
   "artifact_check_status_enum": ["NOT_RUN", "PASS", "FAIL", "UNAVAILABLE"],
   "artifact_checks": {
-    "parse": {"status": "PASS", "parser_version": "release-validator/0.8", "atom_count": 16},
-    "hash_verification": {"status": "PASS", "expected_sha256": "d0d813aefbeafb52578e500a282cee13e7ef939d967d26f128b785c7ba0e52c5", "computed_sha256": "d0d813aefbeafb52578e500a282cee13e7ef939d967d26f128b785c7ba0e52c5", "verifier": "release-validator/0.8"},
+    "parse": {"status": "PASS", "parser_version": "release-validator/0.9", "atom_count": 16},
+    "hash_verification": {"status": "PASS", "expected_sha256": "ff88e00d0c97b02205e7a2bef22f6391c9d287fbb713b60976fe81a055c97255", "computed_sha256": "ff88e00d0c97b02205e7a2bef22f6391c9d287fbb713b60976fe81a055c97255", "verifier": "release-validator/0.9"},
     "composition_derivation": {"status": "PASS", "method": "ELEMENT_COUNT_DIVIDED_BY_TOTAL_DISPLAY_ATOMS", "sum_atomic_percent": 100.0, "tolerance": 1e-09},
-    "manifest_ui_identity": {"status": "PASS", "verifier": "release-validator/0.8"},
-    "javascript_syntax": {"status": "PASS", "runtime": "node --check", "verifier": "release-validator/0.8"},
-    "license_classification": {"status": "PASS", "mapping": "REUSE.toml fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0", "verifier": "release-validator/0.8"},
-    "render_replay": {"status": "UNAVAILABLE", "viewer_build": "material-evidence-card/v0.0.9-p0", "camera_preset": "INITIAL_ISOMETRIC", "representation": "BALL_AND_STICK", "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY", "reason": "Managed browser replay environment unavailable; no replay PASS is claimed."}
+    "manifest_ui_identity": {"status": "PASS", "verifier": "release-validator/0.9"},
+    "embedded_viewer_coordinate_identity": {"status": "PASS", "verifier": "release-validator/0.9"},
+    "javascript_syntax": {"status": "PASS", "runtime": "node --check", "verifier": "release-validator/0.9"},
+    "license_classification": {"status": "PASS", "mapping": "REUSE.toml fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0", "verifier": "release-validator/0.9"},
+    "render_replay": {"status": "UNAVAILABLE", "viewer_build": "material-evidence-card/v0.0.10-p0", "camera_preset": "INITIAL_ISOMETRIC", "representation": "BALL_AND_STICK", "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY", "reason": "Managed browser replay environment unavailable; no replay PASS is claimed."}
   },
   "publication_gate": {
     "sequential_fixture_id": "PASS",
@@ -60,6 +61,7 @@
     "xyz_parse": "PASS",
     "sha256_binding": "PASS",
     "manifest_ui_identity": "PASS",
+    "embedded_viewer_coordinate_identity": "PASS",
     "javascript_syntax": "PASS",
     "license_classification": "PASS"
   },
