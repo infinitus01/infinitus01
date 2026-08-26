@@ -5,9 +5,9 @@
     "version": "1.0",
     "path": "MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md"
   },
-  "release": "v0.0.11-p0",
+  "release": "v0.0.12-p0",
   "purpose": "PERSONAL_PORTFOLIO_DEMO",
-  "fixture_id": "SYN-HEA-010",
+  "fixture_id": "SYN-HEA-011",
   "recipe_class": "SYNTHETIC_FIXTURE",
   "fixture_type": "SYNTHETIC_VISUALIZATION_FIXTURE",
   "source_provenance": {
@@ -16,20 +16,20 @@
     "source_reference": null,
     "reuse_license": "CC0-1.0"
   },
-  "structure_file": "fixture/SYN-HEA-010.xyz",
-  "structure_sha256": "af3438c5ca2a8e53fb6ad34d1f7a19ca05da48d76a6488a27dfc9f00f0a16268",
+  "structure_file": "fixture/SYN-HEA-011.xyz",
+  "structure_sha256": "116f4453e9ce056511b88e855f3a6af4ba6f3e1c257ac83fc73af0b59d1666a0",
   "atom_count": 16,
   "nominal_atomic_composition": {
     "basis": "ATOMIC_PERCENT",
     "derivation": "DISPLAY_ATOM_COUNT",
-    "display_notation": "Fe62.5Ni25Cr12.5 (at.%)",
+    "display_notation": "Fe12.5Ni25Cr62.5 (at.%)",
     "display_notation_authority": "NON_AUTHORITATIVE",
     "total_atomic_percent": 100.0,
     "tolerance": 1e-09,
     "components": {
-      "Fe": {"display_atom_count": 10, "atomic_percent": 62.5},
+      "Fe": {"display_atom_count": 2, "atomic_percent": 12.5},
       "Ni": {"display_atom_count": 4, "atomic_percent": 25.0},
-      "Cr": {"display_atom_count": 2, "atomic_percent": 12.5}
+      "Cr": {"display_atom_count": 10, "atomic_percent": 62.5}
     }
   },
   "coordinate_basis": "CARTESIAN_ONLY",
@@ -44,14 +44,14 @@
   "decision_usable": false,
   "artifact_check_status_enum": ["NOT_RUN", "PASS", "FAIL", "UNAVAILABLE"],
   "artifact_checks": {
-    "parse": {"status": "PASS", "parser_version": "release-validator/0.10", "atom_count": 16},
-    "hash_verification": {"status": "PASS", "expected_sha256": "af3438c5ca2a8e53fb6ad34d1f7a19ca05da48d76a6488a27dfc9f00f0a16268", "computed_sha256": "af3438c5ca2a8e53fb6ad34d1f7a19ca05da48d76a6488a27dfc9f00f0a16268", "verifier": "release-validator/0.10"},
+    "parse": {"status": "PASS", "parser_version": "release-validator/0.11", "atom_count": 16},
+    "hash_verification": {"status": "PASS", "expected_sha256": "116f4453e9ce056511b88e855f3a6af4ba6f3e1c257ac83fc73af0b59d1666a0", "computed_sha256": "116f4453e9ce056511b88e855f3a6af4ba6f3e1c257ac83fc73af0b59d1666a0", "verifier": "release-validator/0.11"},
     "composition_derivation": {"status": "PASS", "method": "ELEMENT_COUNT_DIVIDED_BY_TOTAL_DISPLAY_ATOMS", "sum_atomic_percent": 100.0, "tolerance": 1e-09},
-    "manifest_ui_identity": {"status": "PASS", "verifier": "release-validator/0.10"},
-    "embedded_viewer_coordinate_identity": {"status": "PASS", "verifier": "release-validator/0.10"},
-    "javascript_syntax": {"status": "PASS", "runtime": "node --check", "verifier": "release-validator/0.10"},
-    "license_classification": {"status": "PASS", "mapping": "REUSE.toml fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0", "verifier": "release-validator/0.10"},
-    "render_replay": {"status": "UNAVAILABLE", "viewer_build": "material-evidence-card/v0.0.11-p0", "camera_preset": "INITIAL_ISOMETRIC", "representation": "BALL_AND_STICK", "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY", "reason": "Managed browser replay environment unavailable; no replay PASS is claimed."}
+    "manifest_ui_identity": {"status": "PASS", "verifier": "release-validator/0.11"},
+    "embedded_viewer_coordinate_identity": {"status": "PASS", "verifier": "release-validator/0.11"},
+    "javascript_syntax": {"status": "PASS", "runtime": "node --check", "verifier": "release-validator/0.11"},
+    "license_classification": {"status": "PASS", "mapping": "REUSE.toml fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0", "verifier": "release-validator/0.11"},
+    "render_replay": {"status": "UNAVAILABLE", "viewer_build": "material-evidence-card/v0.0.12-p0", "camera_preset": "INITIAL_ISOMETRIC", "representation": "BALL_AND_STICK", "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY", "reason": "Managed browser replay environment unavailable; no replay PASS is claimed."}
   },
   "publication_gate": {
     "sequential_fixture_id": "PASS",
