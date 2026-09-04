@@ -2,15 +2,15 @@
 
 A personal portfolio prototype exploring how interactive material visualization can be connected to composition identity, artifact checks, reproducibility metadata, and explicit scientific claim boundaries.
 
-This project follows [`MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md`](MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md). Every recurring synthetic showcase must use the same field names, state model, and publication gates.
+This project follows [`MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md`](MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md). Every recurring synthetic showcase uses the same field names, state model, and publication gates.
 
 ## Release status
 
 ```text
-RELEASE: v0.0.15-p0
+RELEASE: v0.0.16-p0
 PURPOSE: PERSONAL_PORTFOLIO_DEMO
 SPECIFICATION: MATERIAL_EVIDENCE_CARD_SPEC_v1.0
-ACTIVE_FIXTURE: SYN-HEA-014
+ACTIVE_FIXTURE: SYN-HEA-015
 RECIPE_CLASS: SYNTHETIC_FIXTURE
 SCIENTIFIC_HYPOTHESIS_STATUS: NONE
 SCIENTIFIC_VALIDATION: NOT_ASSESSED
@@ -38,11 +38,11 @@ This release does **not** establish crystallographic interpretation, phase stabi
 
 | Field | Value |
 |---|---|
-| Fixture ID | `SYN-HEA-014` |
+| Fixture ID | `SYN-HEA-015` |
 | Recipe class | `SYNTHETIC_FIXTURE` |
-| Nominal atomic composition | `Fe 37.5 at.% · Ni 50 at.% · Cr 12.5 at.%` |
-| Display notation | `Fe37.5Ni50Cr12.5 (at.%)` — non-authoritative |
-| Composition derivation | `6 Fe : 8 Ni : 2 Cr` from 16 synthetic display atoms |
+| Nominal atomic composition | `Fe 62.5 at.% · Ni 12.5 at.% · Cr 25 at.%` |
+| Display notation | `Fe62.5Ni12.5Cr25 (at.%)` — non-authoritative |
+| Composition derivation | `10 Fe : 2 Ni : 4 Cr` from 16 synthetic display atoms |
 | Atomic-percent total | `100.0` with tolerance `1e-09` |
 | Fixture origin | `GENERATED_IN_PROJECT` |
 | Scientific hypothesis | `NONE` |
@@ -72,6 +72,7 @@ Published fixture files and hashes are immutable within this portfolio series.
 | `SYN-HEA-012` | `Fe 12.5 at.% · Ni 62.5 at.% · Cr 25 at.%` | `2 : 10 : 4` | `c017b5f5622d6d092edeb1b376249c79d55c67dfb0fda8cbbd7c5235dd1435db` |
 | `SYN-HEA-013` | `Fe 50 at.% · Ni 37.5 at.% · Cr 12.5 at.%` | `8 : 6 : 2` | `c807c20242dff0b6a7a38a9c10fd2e2918a86b2471dbd0973738539967b880df` |
 | `SYN-HEA-014` | `Fe 37.5 at.% · Ni 50 at.% · Cr 12.5 at.%` | `6 : 8 : 2` | `509aa0ff70d11918e617d8faf923bdae8660ae258af08574f41f33f586b26a7e` |
+| `SYN-HEA-015` | `Fe 62.5 at.% · Ni 12.5 at.% · Cr 25 at.%` | `10 : 2 : 4` | `e48e6fbfd25307626e60767adee25b08a39cb791b088e9d48438e3c05e7e8075` |
 
 ## Open locally
 
@@ -79,8 +80,8 @@ Open `index.html` directly in a modern browser. No package installation, web ser
 
 ## Evidence identity
 
-- Active fixture: `fixture/SYN-HEA-014.xyz`
-- SHA-256: `509aa0ff70d11918e617d8faf923bdae8660ae258af08574f41f33f586b26a7e`
+- Active fixture: `fixture/SYN-HEA-015.xyz`
+- SHA-256: `e48e6fbfd25307626e60767adee25b08a39cb791b088e9d48438e3c05e7e8075`
 - Atom count: `16`
 - Coordinate basis: `CARTESIAN_ONLY`
 - Crystallographic semantics: `NONE`
@@ -118,20 +119,7 @@ The render replay contract means the same input, viewer build, recorded initial 
 
 ## Recurring showcase contract
 
-Every scheduled synthetic update must:
-
-1. create exactly one new sequential synthetic fixture;
-2. preserve all previous fixture files and identities;
-3. use `RECIPE_CLASS: SYNTHETIC_FIXTURE`;
-4. state `NOMINAL_ATOMIC_COMPOSITION` with an explicit `ATOMIC_PERCENT` basis;
-5. derive percentages from recorded synthetic display-atom counts;
-6. make the percentages sum to 100 within the recorded tolerance;
-7. keep `SCIENTIFIC_HYPOTHESIS_STATUS: NONE`;
-8. keep `SCIENTIFIC_VALIDATION: NOT_ASSESSED`;
-9. keep `SCIENTIFIC_CLAIM_STATUS: NONE`;
-10. keep `DECISION_USABLE: FALSE`;
-11. keep `CRYSTALLOGRAPHIC_SEMANTICS: NONE`;
-12. run deterministic sequential-ID, preservation, parse, hash, composition, manifest/UI identity, JavaScript, and license checks before publication.
+Every scheduled synthetic update must create exactly one sequential synthetic fixture; preserve all previous fixture files and identities; use `SYNTHETIC_FIXTURE`; state `ATOMIC_PERCENT` and `DISPLAY_ATOM_COUNT`; sum to 100 within tolerance; preserve the locked scientific and spatial boundaries; and pass deterministic sequential-ID, preservation, parse, hash, composition, manifest/UI identity, JavaScript, and license checks before publication.
 
 A public-source recipe or hypothesis candidate requires a separate human-authorized workflow and must not be silently emitted by the synthetic-fixture automation.
 
@@ -139,7 +127,7 @@ A public-source recipe or hypothesis candidate requires a separate human-authori
 
 - Demo HTML, CSS, JavaScript, documentation, and manifest: MIT.
 - Synthetic XYZ fixtures and their SHA-256 sidecars: CC0-1.0.
-- `REUSE.toml` classifies `fixture/*.xyz` and `fixture/*.xyz.sha256` as CC0-1.0; the wildcard mapping covers `SYN-HEA-014` without changing any previous fixture classification.
+- `REUSE.toml` classifies `fixture/*.xyz` and `fixture/*.xyz.sha256` as CC0-1.0; the wildcard mapping covers `SYN-HEA-015` without changing any previous fixture classification.
 - No ProofRoute name, logo, or proprietary validation/governance core is included in this release.
 
 See `LICENSES.md`, `LICENSES/`, and `REUSE.toml` for file-level scope.
