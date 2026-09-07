@@ -5,9 +5,9 @@
     "version": "1.0",
     "path": "MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md"
   },
-  "release": "v0.0.16-p0",
+  "release": "v0.0.17-p0",
   "purpose": "PERSONAL_PORTFOLIO_DEMO",
-  "fixture_id": "SYN-HEA-015",
+  "fixture_id": "SYN-HEA-016",
   "recipe_class": "SYNTHETIC_FIXTURE",
   "fixture_type": "SYNTHETIC_VISUALIZATION_FIXTURE",
   "source_provenance": {
@@ -16,28 +16,28 @@
     "source_reference": null,
     "reuse_license": "CC0-1.0"
   },
-  "structure_file": "fixture/SYN-HEA-015.xyz",
-  "structure_sha256": "e48e6fbfd25307626e60767adee25b08a39cb791b088e9d48438e3c05e7e8075",
+  "structure_file": "fixture/SYN-HEA-016.xyz",
+  "structure_sha256": "244058ab203d3082b09bc45d89ae74bddddbb42015513cee8136905447b0f78d",
   "atom_count": 16,
   "nominal_atomic_composition": {
     "basis": "ATOMIC_PERCENT",
     "derivation": "DISPLAY_ATOM_COUNT",
-    "display_notation": "Fe62.5Ni12.5Cr25 (at.%)",
+    "display_notation": "Fe25Ni12.5Cr62.5 (at.%)",
     "display_notation_authority": "NON_AUTHORITATIVE",
     "total_atomic_percent": 100.0,
     "tolerance": 1e-09,
     "components": {
       "Fe": {
-        "display_atom_count": 10,
-        "atomic_percent": 62.5
+        "display_atom_count": 4,
+        "atomic_percent": 25.0
       },
       "Ni": {
         "display_atom_count": 2,
         "atomic_percent": 12.5
       },
       "Cr": {
-        "display_atom_count": 4,
-        "atomic_percent": 25.0
+        "display_atom_count": 10,
+        "atomic_percent": 62.5
       }
     }
   },
@@ -60,14 +60,14 @@
   "artifact_checks": {
     "parse": {
       "status": "PASS",
-      "parser_version": "release-validator/0.15",
+      "parser_version": "release-validator/0.16",
       "atom_count": 16
     },
     "hash_verification": {
       "status": "PASS",
-      "expected_sha256": "e48e6fbfd25307626e60767adee25b08a39cb791b088e9d48438e3c05e7e8075",
-      "computed_sha256": "e48e6fbfd25307626e60767adee25b08a39cb791b088e9d48438e3c05e7e8075",
-      "verifier": "release-validator/0.15"
+      "expected_sha256": "244058ab203d3082b09bc45d89ae74bddddbb42015513cee8136905447b0f78d",
+      "computed_sha256": "244058ab203d3082b09bc45d89ae74bddddbb42015513cee8136905447b0f78d",
+      "verifier": "release-validator/0.16"
     },
     "composition_derivation": {
       "status": "PASS",
@@ -77,25 +77,25 @@
     },
     "manifest_ui_identity": {
       "status": "PASS",
-      "verifier": "release-validator/0.15"
+      "verifier": "release-validator/0.16"
     },
     "embedded_viewer_coordinate_identity": {
       "status": "PASS",
-      "verifier": "release-validator/0.15"
+      "verifier": "release-validator/0.16"
     },
     "javascript_syntax": {
       "status": "PASS",
       "runtime": "node --check",
-      "verifier": "release-validator/0.15"
+      "verifier": "release-validator/0.16"
     },
     "license_classification": {
       "status": "PASS",
       "mapping": "REUSE.toml fixture/*.xyz and fixture/*.xyz.sha256 -> CC0-1.0",
-      "verifier": "release-validator/0.15"
+      "verifier": "release-validator/0.16"
     },
     "render_replay": {
       "status": "NOT_RUN",
-      "viewer_build": "material-evidence-card/v0.0.16-p0",
+      "viewer_build": "material-evidence-card/v0.0.17-p0",
       "camera_preset": "INITIAL_ISOMETRIC",
       "representation": "BALL_AND_STICK",
       "replay_contract": "SEMANTIC_VIEW_RECREATION_NOT_PIXEL_IDENTITY",
