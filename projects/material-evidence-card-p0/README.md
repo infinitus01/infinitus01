@@ -7,10 +7,10 @@ This project follows [`MATERIAL_EVIDENCE_CARD_SPEC_v1.0.md`](MATERIAL_EVIDENCE_C
 ## Release status
 
 ```text
-RELEASE: v0.0.17-p0
+RELEASE: v0.0.18-p0
 PURPOSE: PERSONAL_PORTFOLIO_DEMO
 SPECIFICATION: MATERIAL_EVIDENCE_CARD_SPEC_v1.0
-ACTIVE_FIXTURE: SYN-HEA-016
+ACTIVE_FIXTURE: SYN-HEA-017
 RECIPE_CLASS: SYNTHETIC_FIXTURE
 SCIENTIFIC_HYPOTHESIS_STATUS: NONE
 SCIENTIFIC_VALIDATION: NOT_ASSESSED
@@ -38,11 +38,11 @@ This release does **not** establish crystallographic interpretation, phase stabi
 
 | Field | Value |
 |---|---|
-| Fixture ID | `SYN-HEA-016` |
+| Fixture ID | `SYN-HEA-017` |
 | Recipe class | `SYNTHETIC_FIXTURE` |
-| Nominal atomic composition | `Fe 25 at.% · Ni 12.5 at.% · Cr 62.5 at.%` |
-| Display notation | `Fe25Ni12.5Cr62.5 (at.%)` — non-authoritative |
-| Composition derivation | `4 Fe : 2 Ni : 10 Cr` from 16 synthetic display atoms |
+| Nominal atomic composition | `Fe 43.75 at.% · Ni 31.25 at.% · Cr 25 at.%` |
+| Display notation | `Fe43.75Ni31.25Cr25 (at.%)` — non-authoritative |
+| Composition derivation | `7 Fe : 5 Ni : 4 Cr` from 16 synthetic display atoms |
 | Atomic-percent total | `100.0` with tolerance `1e-09` |
 | Fixture origin | `GENERATED_IN_PROJECT` |
 | Scientific hypothesis | `NONE` |
@@ -74,6 +74,7 @@ Published fixture files and hashes are immutable within this portfolio series.
 | `SYN-HEA-014` | `Fe 37.5 at.% · Ni 50 at.% · Cr 12.5 at.%` | `6 : 8 : 2` | `509aa0ff70d11918e617d8faf923bdae8660ae258af08574f41f33f586b26a7e` |
 | `SYN-HEA-015` | `Fe 62.5 at.% · Ni 12.5 at.% · Cr 25 at.%` | `10 : 2 : 4` | `e48e6fbfd25307626e60767adee25b08a39cb791b088e9d48438e3c05e7e8075` |
 | `SYN-HEA-016` | `Fe 25 at.% · Ni 12.5 at.% · Cr 62.5 at.%` | `4 : 2 : 10` | `244058ab203d3082b09bc45d89ae74bddddbb42015513cee8136905447b0f78d` |
+| `SYN-HEA-017` | `Fe 43.75 at.% · Ni 31.25 at.% · Cr 25 at.%` | `7 : 5 : 4` | `bf7e2c408e8a55e12b1f85bd46008c7e56c2d38c0fa76611a2a4142d798fa7e8` |
 
 ## Open locally
 
@@ -81,8 +82,8 @@ Open `index.html` directly in a modern browser. No package installation, web ser
 
 ## Evidence identity
 
-- Active fixture: `fixture/SYN-HEA-016.xyz`
-- SHA-256: `244058ab203d3082b09bc45d89ae74bddddbb42015513cee8136905447b0f78d`
+- Active fixture: `fixture/SYN-HEA-017.xyz`
+- SHA-256: `bf7e2c408e8a55e12b1f85bd46008c7e56c2d38c0fa76611a2a4142d798fa7e8`
 - Atom count: `16`
 - Coordinate basis: `CARTESIAN_ONLY`
 - Crystallographic semantics: `NONE`
@@ -128,7 +129,7 @@ A public-source recipe or hypothesis candidate requires a separate human-authori
 
 - Demo HTML, CSS, JavaScript, documentation, and manifest: MIT.
 - Synthetic XYZ fixtures and their SHA-256 sidecars: CC0-1.0.
-- `REUSE.toml` classifies `fixture/*.xyz` and `fixture/*.xyz.sha256` as CC0-1.0; the wildcard mapping covers `SYN-HEA-016` without changing any previous fixture classification.
+- `REUSE.toml` classifies `fixture/*.xyz` and `fixture/*.xyz.sha256` as CC0-1.0; the wildcard mapping covers `SYN-HEA-017` without changing any previous fixture classification.
 - No ProofRoute name, logo, or proprietary validation/governance core is included in this release.
 
 See `LICENSES.md`, `LICENSES/`, and `REUSE.toml` for file-level scope.
